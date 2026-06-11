@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Revolut · Product Space</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;450;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --orange:#FF631F; --orange-dk:#E5500F; --orange-lt:#FFF1EB; --orange-md:#FFD3C0;
+  --lime:#D9F26E; --lime-ink:#3C4A14;
+  --bg:#ffffff; --canvas:#FAF8F4; --bg-soft:#F5F2EC; --sidebar:#F3F0EA;
+  --ink:#171410; --ink-2:#544F48; --ink-3:#928B81;
+  --line:rgba(20,16,12,.09); --line-md:rgba(20,16,12,.14);
+  --green:#1a7a4a; --green-lt:#e7f3ec;
+  --neutral:#5b6573; --neutral-lt:#eef0f3;
+  --blue:#2d6cdf; --blue-lt:#eaf0fc;
+  --hero-grad:linear-gradient(115deg,#EAF0F2 0%,#F1EEF6 46%,#FBF7F1 100%);
+  --ui:'Inter',sans-serif; --display:'Plus Jakarta Sans',sans-serif; --mono:'JetBrains Mono',monospace;
+  --sb-w:276px;
+}
+html,body{height:100%}
+body{font-family:var(--ui);background:var(--canvas);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;overflow:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea{font-family:inherit}
+::selection{background:var(--orange-md)}
+h1,h2,h3,.display{font-family:var(--display)}
+button:focus-visible,a:focus-visible,textarea:focus-visible{outline:2px solid var(--orange);outline-offset:2px}
+.scrollbar::-webkit-scrollbar{width:9px}
+.scrollbar::-webkit-scrollbar-thumb{background:var(--line-md);border-radius:10px;border:2px solid transparent;background-clip:padding-box}
+
+.app{display:grid;grid-template-columns:var(--sb-w) 1fr;height:100vh}
+
+/* ---- SIDEBAR ---- */
+.sb{background:var(--sidebar);border-right:1px solid var(--line);display:flex;flex-direction:column;height:100vh;z-index:40}
+.sb-top{padding:16px 14px 8px}
+.brand{display:flex;align-items:center;gap:10px;padding:4px 6px 14px}
+.brand-mark{width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#FF8A4C,#FF631F);display:grid;place-items:center;flex-shrink:0;box-shadow:0 2px 9px rgba(255,99,31,.32)}
+.brand-name{font-family:var(--display);font-size:15px;font-weight:700;letter-spacing:-.02em;line-height:1.05}
+.brand-name b{display:block;font-size:10px;font-weight:500;color:var(--ink-3);letter-spacing:.01em}
+.new-chat{width:100%;display:flex;align-items:center;gap:9px;background:var(--orange);color:#fff;padding:11px 14px;border-radius:11px;font-weight:600;font-size:14px;box-shadow:0 1px 4px rgba(255,99,31,.28);transition:transform .12s,box-shadow .15s,background .15s}
+.new-chat:hover{background:var(--orange-dk);box-shadow:0 3px 12px rgba(255,99,31,.32)}
+.new-chat:active{transform:translateY(1px)}
+.new-chat svg{width:16px;height:16px;stroke-width:2.4}
+
+.sb-nav{padding:10px 10px 4px;display:flex;flex-direction:column;gap:2px}
+.sb-link{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:9px;font-size:13.5px;font-weight:500;color:var(--ink-2);width:100%;text-align:left;transition:background .14s,color .14s}
+.sb-link svg{width:17px;height:17px;stroke-width:1.9;opacity:.7}
+.sb-link:hover{background:rgba(20,16,12,.05);color:var(--ink)}
+.sb-link.active{background:#fff;color:var(--ink);font-weight:600;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.sb-link.active svg{opacity:1;color:var(--orange)}
+.sb-link .ct{margin-left:auto;font-size:11px;color:var(--ink-3)}
+
+.sb-section{font-size:10.5px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);padding:15px 16px 7px;display:flex;align-items:center;justify-content:space-between}
+.sb-section .add{cursor:pointer;color:var(--ink-3);font-size:15px;line-height:1}
+.sb-section .add:hover{color:var(--orange)}
+.proj-list{padding:0 10px}
+.proj-item{display:flex;align-items:center;gap:10px;padding:8px 11px;border-radius:9px;font-size:13px;color:var(--ink-2);width:100%;text-align:left;cursor:pointer;transition:background .13s}
+.proj-item:hover{background:rgba(20,16,12,.05)}
+.proj-item.active{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.proj-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.proj-item .pt{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:500}
+.proj-item .pn{font-size:10px;font-family:var(--mono);color:var(--ink-3)}
+
+.chats{flex:1;overflow-y:auto;padding:0 10px 10px}
+.chat-item{display:flex;align-items:center;gap:9px;padding:7px 11px;border-radius:9px;font-size:12.5px;color:var(--ink-2);width:100%;text-align:left;cursor:pointer;transition:background .13s}
+.chat-item:hover{background:rgba(20,16,12,.05)}
+.chat-item.active{background:#fff;color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.04)}
+.chat-item .ci-t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.chat-item .ci-ico{font-size:13px;flex-shrink:0;opacity:.8}
+
+.sb-bottom{border-top:1px solid var(--line);padding:10px}
+.prod-chip{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:11px;cursor:pointer;transition:background .14s}
+.prod-chip:hover{background:rgba(20,16,12,.05)}
+.prod-ava{width:30px;height:30px;border-radius:9px;background:#0b0b16;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0;font-family:var(--display)}
+.prod-meta{flex:1;min-width:0;line-height:1.25}
+.prod-l{font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.05em}
+.prod-n{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prod-chip .gear{color:var(--ink-3);opacity:.6}
+.user-row{display:flex;align-items:center;gap:10px;padding:9px 11px;margin-top:2px}
+.user-ava{width:28px;height:28px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:11px;font-weight:600;flex-shrink:0}
+.user-n{font-size:13px;font-weight:600}.user-p{font-size:11px;color:var(--ink-3)}
+
+/* ---- MAIN ---- */
+.main{display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;background:var(--canvas)}
+.topbar{height:54px;display:flex;align-items:center;gap:12px;padding:0 24px;border-bottom:1px solid var(--line);flex-shrink:0;background:rgba(250,248,244,.85);backdrop-filter:blur(8px);z-index:10}
+.hamb{display:none;width:34px;height:34px;border-radius:9px;align-items:center;justify-content:center;color:var(--ink-2)}
+.tb-title{font-size:14px;font-weight:600;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:flex;align-items:center;gap:8px}
+.tb-title .dim{color:var(--ink-3);font-weight:500}
+.tb-title .sep{color:var(--ink-3)}
+.tb-model{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-2);padding:6px 11px;border-radius:100px;background:#fff;border:1px solid var(--line-md)}
+.tb-model .d{width:6px;height:6px;border-radius:50%;background:#22c55e}
+
+.scroll{flex:1;overflow-y:auto;scroll-behavior:smooth}
+.view{display:none}.view.active{display:block}
+.page{max-width:940px;margin:0 auto;padding:26px 26px 60px;animation:rise .32s ease}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* hero (subtle gradient retained only here) */
+.hero{border-radius:20px;padding:26px 28px;background:var(--hero-grad);border:1px solid var(--line);position:relative;overflow:hidden;margin-bottom:22px}
+.hero-eyebrow{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--orange-dk);margin-bottom:8px}
+.hero h1{font-size:28px;font-weight:700;letter-spacing:-.025em;line-height:1.08;margin-bottom:8px}
+.hero p{font-size:14px;color:var(--ink-2);max-width:520px}
+.online{display:inline-flex;align-items:center;gap:8px;background:var(--lime);color:var(--lime-ink);font-size:12px;font-weight:700;padding:6px 13px;border-radius:100px;position:absolute;top:24px;right:26px}
+.online .av{display:flex}
+.online .av span{width:20px;height:20px;border-radius:50%;border:2px solid var(--lime);color:#fff;display:grid;place-items:center;font-size:8px;font-weight:700;margin-left:-7px}
+.online .av span:first-child{margin-left:0}
+
+.block-label{font-size:13px;font-weight:700;letter-spacing:-.01em;margin:24px 0 13px;display:flex;align-items:center;gap:8px}
+.block-label .all{margin-left:auto;font-size:12px;font-weight:500;color:var(--orange-dk);cursor:pointer}
+.block-label .all:hover{text-decoration:underline}
+
+/* project cards on dashboard */
+.proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.pcard{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px 19px;text-align:left;transition:box-shadow .18s,transform .18s,border-color .15s;cursor:pointer}
+.pcard:hover{box-shadow:0 8px 26px rgba(20,16,12,.08);transform:translateY(-2px);border-color:var(--line-md)}
+.pcard-top{display:flex;align-items:center;gap:9px;margin-bottom:10px}
+.pcard-status{font-size:10.5px;font-weight:700;font-family:var(--mono);padding:3px 9px;border-radius:6px;display:inline-flex;align-items:center;gap:6px}
+.ps-active{background:var(--green-lt);color:var(--green)}
+.ps-planning{background:var(--neutral-lt);color:var(--neutral)}
+.ps-done{background:var(--bg-soft);color:var(--ink-3)}
+.pcard-product{margin-left:auto;font-size:11px;color:var(--ink-3);font-family:var(--mono)}
+.pcard h3{font-size:16px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px}
+.pcard p{font-size:12.5px;color:var(--ink-2);line-height:1.5;margin-bottom:14px}
+.pbar{height:6px;border-radius:5px;background:var(--bg-soft);overflow:hidden;margin-bottom:8px}
+.pbar i{display:block;height:100%;background:var(--orange);border-radius:5px}
+.pcard-foot{display:flex;align-items:center;justify-content:space-between}
+.pcard-foot .prog{font-size:11.5px;color:var(--ink-3);font-family:var(--mono)}
+.avastack{display:flex}
+.avastack span{width:22px;height:22px;border-radius:50%;border:2px solid #fff;color:#fff;display:grid;place-items:center;font-size:8.5px;font-weight:700;margin-left:-6px}
+.avastack span:first-child{margin-left:0}
+
+/* quick tasks */
+.quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.quick{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;text-align:left;display:flex;gap:13px;align-items:flex-start;transition:box-shadow .18s,transform .18s,border-color .15s}
+.quick:hover{box-shadow:0 6px 20px rgba(20,16,12,.07);transform:translateY(-2px);border-color:var(--line-md)}
+.quick-ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-size:18px;background:var(--bg-soft);border:1px solid var(--line);flex-shrink:0}
+.quick-title{font-size:13.5px;font-weight:700;margin-bottom:3px;font-family:var(--display)}
+.quick-desc{font-size:12px;color:var(--ink-2);line-height:1.45}
+.quick-go{color:var(--ink-3);font-size:16px;align-self:center;transition:transform .15s,color .15s}
+.quick:hover .quick-go{transform:translateX(3px);color:var(--orange)}
+
+/* feed */
+.feed{display:flex;flex-direction:column;gap:8px}
+.feed-item{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 15px;display:flex;align-items:center;gap:13px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.feed-item:hover{border-color:var(--line-md);box-shadow:0 4px 14px rgba(20,16,12,.05)}
+.feed-ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:16px;background:var(--bg-soft);border:1px solid var(--line);flex-shrink:0}
+.feed-main{flex:1;min-width:0}
+.feed-title{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-meta{font-size:12px;color:var(--ink-3);margin-top:2px}
+.feed-meta b{color:var(--ink-2);font-weight:600}
+.feed-proj{font-size:11px;color:var(--ink-3);background:var(--bg-soft);padding:2px 8px;border-radius:6px;white-space:nowrap}
+.feed-time{font-family:var(--mono);font-size:11px;color:var(--ink-3);white-space:nowrap}
+.status-pill{font-size:10px;font-family:var(--mono);padding:3px 9px;border-radius:20px;font-weight:600;white-space:nowrap}
+.st-done{background:var(--green-lt);color:var(--green)}.st-draft{background:var(--neutral-lt);color:var(--neutral)}
+
+/* product context card (kept, calmer) */
+.ctx-card{background:linear-gradient(125deg,#1b1f3b,#3a2e63 60%,#5b3a7a);border-radius:16px;padding:22px 24px;color:#fff;position:relative;overflow:hidden;margin-top:22px}
+.ctx-card::after{content:'';position:absolute;right:-50px;top:-50px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.06)}
+.ctx-l{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:9px;position:relative;z-index:2}
+.ctx-n{font-family:var(--display);font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:6px;position:relative;z-index:2}
+.ctx-d{font-size:13px;color:rgba(255,255,255,.8);line-height:1.55;max-width:540px;position:relative;z-index:2}
+.ctx-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:14px;position:relative;z-index:2}
+.ctx-tag{font-size:11.5px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);padding:4px 11px;border-radius:100px}
+.ctx-edit{position:absolute;top:18px;right:20px;z-index:3;font-size:12px;color:#fff;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.2);padding:6px 13px;border-radius:9px;font-weight:600}
+.ctx-edit:hover{background:rgba(255,255,255,.22)}
+
+/* ===== PROJECT VIEW ===== */
+.proj-hero{border-radius:18px;border:1px solid var(--line);background:#fff;padding:24px 26px;margin-bottom:22px;position:relative}
+.proj-back{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;color:var(--ink-3);margin-bottom:14px}
+.proj-back:hover{color:var(--orange)}
+.proj-back svg{width:14px;height:14px}
+.proj-hero-top{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.proj-hero h1{font-size:25px;font-weight:700;letter-spacing:-.025em;width:100%;margin-bottom:6px}
+.proj-hero .goal{font-size:14px;color:var(--ink-2);line-height:1.6;max-width:620px;margin-bottom:18px}
+.proj-meta-row{display:flex;align-items:center;gap:22px;flex-wrap:wrap;padding-top:16px;border-top:1px solid var(--line)}
+.pm-block .l{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-3);margin-bottom:5px}
+.pm-block .v{font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px}
+.proj-actions{position:absolute;top:24px;right:26px;display:flex;gap:9px}
+.proj-prog{flex:1;min-width:160px}
+.proj-prog .pbar{margin-top:6px;margin-bottom:0}
+
+/* artifacts table */
+.av-head{margin-bottom:18px}
+.av-head .eb{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--orange-dk);margin-bottom:7px}
+.av-head h1{font-size:26px;font-weight:700;letter-spacing:-.025em}
+.av-head p{font-size:14px;color:var(--ink-2);margin-top:7px;max-width:560px}
+.av-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.av-f{padding:7px 14px;border-radius:100px;font-size:12.5px;font-weight:500;border:1px solid var(--line-md);background:#fff;color:var(--ink-2)}
+.av-f.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.hist{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.hist-row{display:grid;grid-template-columns:1fr 150px 150px 110px 84px;gap:14px;align-items:center;padding:13px 18px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .14s}
+.hist-row:last-child{border-bottom:none}
+.hist-row:hover{background:var(--bg-soft)}
+.hist-row.head{cursor:default;background:var(--bg-soft);font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.hist-name{display:flex;align-items:center;gap:11px;min-width:0}
+.hist-name .hi{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:15px;flex-shrink:0;background:var(--bg-soft);border:1px solid var(--line)}
+.hist-name-t{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hist-name-s{font-size:11.5px;color:var(--ink-3)}
+.hist-author{font-size:12.5px;color:var(--ink-2);display:flex;align-items:center;gap:8px}
+.hist-proj{font-size:12px;color:var(--ink-2)}
+.mini-ava{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff}
+.hist-date{font-family:var(--mono);font-size:11.5px;color:var(--ink-3)}
+@media(max-width:980px){.hist-row{grid-template-columns:1fr 130px 84px}.hist-proj,.hist-date{display:none}}
+
+/* ===== CHAT ===== */
+.thread-wrap{flex:1;overflow-y:auto;scroll-behavior:smooth}
+.thread{max-width:760px;margin:0 auto;padding:26px 24px 200px;display:flex;flex-direction:column;gap:24px}
+.proj-banner{max-width:760px;margin:14px auto -6px;padding:0 24px}
+.proj-banner .pb{display:inline-flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2);background:#fff;border:1px solid var(--line);padding:6px 12px;border-radius:9px;cursor:pointer}
+.proj-banner .pb:hover{border-color:var(--line-md)}
+.proj-banner .pb .dot{width:7px;height:7px;border-radius:50%}
+.msg{display:flex;gap:13px;animation:rise .32s ease}
+.msg-ava{width:30px;height:30px;border-radius:9px;flex-shrink:0;display:grid;place-items:center}
+.msg-ava.ai{background:var(--orange)}
+.msg-ava.ai svg{width:16px;height:16px}
+.msg-ava.me{font-size:11px;font-weight:600;border-radius:50%;color:#fff}
+.msg-body{flex:1;min-width:0;padding-top:3px}
+.msg.user{justify-content:flex-end}
+.msg.user .msg-body{flex:0 1 auto;max-width:80%}
+.bubble{background:#fff;border:1px solid var(--line);border-radius:15px 15px 4px 15px;padding:11px 15px;font-size:14.5px;line-height:1.55}
+.msg.user .task-tag{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:var(--orange-dk);background:var(--orange-lt);border:1px solid var(--orange-md);padding:3px 9px;border-radius:7px;margin-bottom:7px}
+.ai-text{font-size:14.5px;line-height:1.65}
+.ai-text p{margin-bottom:10px}.ai-text p:last-child{margin-bottom:0}
+.ai-text strong{font-weight:600}
+.ai-text ul{list-style:none;margin:6px 0 10px;display:flex;flex-direction:column;gap:5px}
+.ai-text ul li{padding-left:18px;position:relative;font-size:14px;color:var(--ink-2)}
+.ai-text ul li::before{content:'';position:absolute;left:5px;top:9px;width:5px;height:5px;border-radius:50%;background:var(--orange)}
+.suggest-task{margin-top:10px;display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-md);background:#fff;padding:7px 13px;border-radius:10px;font-size:13px;font-weight:500;transition:border-color .14s,background .14s}
+.suggest-task:hover{border-color:var(--orange);background:var(--orange-lt)}
+.typing{display:flex;gap:5px;padding:6px 0}
+.typing span{width:7px;height:7px;border-radius:50%;background:var(--ink-3);animation:blink 1.3s infinite both}
+.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+@keyframes blink{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+
+.art{border:1px solid var(--line-md);border-radius:16px;overflow:hidden;background:#fff;margin-top:6px;box-shadow:0 4px 18px rgba(20,16,12,.06)}
+.art-head{display:flex;align-items:center;gap:11px;padding:13px 16px;border-bottom:1px solid var(--line);background:var(--bg-soft)}
+.art-ico{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;font-size:16px;background:#fff;border:1px solid var(--line)}
+.art-h-meta{flex:1;min-width:0}
+.art-h-title{font-size:13.5px;font-weight:700;font-family:var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.art-h-sub{font-size:11px;color:var(--ink-3);font-family:var(--mono)}
+.art-h-actions{display:flex;gap:5px}
+.icon-btn{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:var(--ink-2);transition:background .14s,color .14s;border:1px solid transparent}
+.icon-btn:hover{background:#fff;border-color:var(--line-md);color:var(--ink)}
+.icon-btn svg{width:15px;height:15px;stroke-width:1.9}
+.art-content{padding:8px 20px 18px;max-height:520px;overflow-y:auto}
+.art-foot{display:flex;gap:8px;padding:11px 16px;border-top:1px solid var(--line);background:var(--bg-soft);flex-wrap:wrap}
+.doc{font-size:13.5px;line-height:1.65}
+.doc h2{font-size:14px;font-weight:700;margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.doc h2 .n{font-family:var(--mono);font-size:10px;color:var(--orange-dk);background:var(--orange-lt);border:1px solid var(--orange-md);padding:2px 7px;border-radius:5px;font-weight:600}
+.doc h3{font-size:13px;font-weight:700;margin:12px 0 5px}
+.doc p{color:var(--ink-2);margin-bottom:9px}
+.doc ul{list-style:none;margin:6px 0 11px;display:flex;flex-direction:column;gap:5px}
+.doc ul li{padding-left:17px;position:relative;color:var(--ink-2)}
+.doc ul li::before{content:'→';position:absolute;left:0;color:var(--orange);font-size:11px;top:2px}
+.doc .tbl{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin:8px 0 12px}
+.doc table{width:100%;border-collapse:collapse;font-size:12.5px}
+.doc th{background:var(--bg-soft);text-align:left;padding:8px 12px;font-weight:700;font-size:11px;border-bottom:1px solid var(--line)}
+.doc td{padding:8px 12px;border-bottom:1px solid var(--line);color:var(--ink-2);vertical-align:top}
+.doc tr:last-child td{border-bottom:none}
+.doc .strong{color:var(--ink);font-weight:600}
+.doc .box{background:var(--bg-soft);border:1px solid var(--line);border-left:3px solid var(--orange);border-radius:9px;padding:12px 15px;font-size:13px;color:var(--ink-2);margin:11px 0;line-height:1.55}
+.doc .box b{color:var(--ink)}
+.doc .pill{display:inline-block;font-family:var(--mono);font-size:9.5px;padding:2px 7px;border-radius:5px;font-weight:600;margin-right:5px}
+.p-hi{background:#fde7e3;color:#c0281a}.p-mid{background:var(--neutral-lt);color:var(--neutral)}.p-lo{background:var(--green-lt);color:var(--green)}
+.editable{outline:none;border-radius:5px;transition:box-shadow .15s,background .15s}
+.edit-on .editable:hover{background:var(--orange-lt)}
+.editable:focus{box-shadow:0 0 0 3px var(--orange-lt);background:var(--orange-lt)}
+
+/* composer */
+.composer-wrap{position:absolute;left:0;right:0;bottom:0;padding:0 24px 22px;background:linear-gradient(to top,var(--canvas) 60%,transparent);pointer-events:none}
+.composer{max-width:760px;margin:0 auto;pointer-events:auto}
+.armed{display:none;align-items:center;gap:8px;margin-bottom:8px}
+.armed.show{display:flex}
+.armed-chip{display:inline-flex;align-items:center;gap:8px;background:var(--orange-lt);border:1px solid var(--orange-md);color:var(--orange-dk);padding:6px 8px 6px 12px;border-radius:10px;font-size:12.5px;font-weight:600}
+.armed-chip .x{width:18px;height:18px;border-radius:6px;display:grid;place-items:center;cursor:pointer}
+.armed-chip .x:hover{background:var(--orange-md)}
+.comp-box{border:1px solid var(--line-md);border-radius:18px;background:#fff;box-shadow:0 4px 20px rgba(20,16,12,.07);padding:8px;transition:border-color .15s,box-shadow .15s}
+.comp-box:focus-within{border-color:var(--orange);box-shadow:0 4px 22px rgba(255,99,31,.13)}
+.comp-input{width:100%;border:none;outline:none;resize:none;font-size:15px;line-height:1.5;padding:9px 10px 4px;background:transparent;color:var(--ink);max-height:160px}
+.comp-input::placeholder{color:var(--ink-3)}
+.comp-bar{display:flex;align-items:center;gap:7px;padding:2px 4px}
+.comp-tool{display:flex;align-items:center;gap:7px;padding:7px 12px;border-radius:10px;font-size:13px;font-weight:500;color:var(--ink-2);border:1px solid var(--line-md);transition:all .14s}
+.comp-tool:hover{border-color:var(--orange);color:var(--orange-dk);background:var(--orange-lt)}
+.comp-tool svg{width:15px;height:15px;stroke-width:2}
+.comp-icon{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;color:var(--ink-3);transition:background .14s,color .14s}
+.comp-icon:hover{background:var(--bg-soft);color:var(--ink-2)}
+.comp-icon svg{width:18px;height:18px;stroke-width:1.9}
+.comp-spacer{flex:1}
+.send{width:34px;height:34px;border-radius:50%;background:var(--orange);color:#fff;display:grid;place-items:center;transition:background .14s,transform .1s,opacity .14s}
+.send:hover{background:var(--orange-dk)}.send:active{transform:scale(.94)}
+.send:disabled{opacity:.35;cursor:default}
+.send svg{width:17px;height:17px;stroke-width:2.4}
+.comp-hint{text-align:center;font-size:11px;color:var(--ink-3);margin-top:9px}
+
+/* empty state */
+.empty-state{max-width:720px;margin:0 auto;padding:6vh 24px 0;text-align:center;animation:rise .4s ease}
+.es-mark{width:54px;height:54px;border-radius:50%;background:linear-gradient(180deg,#FF8A4C,#FF631F);display:grid;place-items:center;margin:0 auto 22px;box-shadow:0 6px 22px rgba(255,99,31,.3)}
+.es-mark svg{width:27px;height:27px}
+.es-title{font-size:28px;font-weight:700;letter-spacing:-.03em;margin-bottom:8px}
+.es-sub{font-size:15px;color:var(--ink-2);margin-bottom:30px;max-width:480px;margin-inline:auto}
+.es-suggest{font-size:11px;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);margin:30px 0 13px;text-align:left}
+.sg-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px;text-align:left}
+.sg{display:flex;gap:13px;align-items:flex-start;border:1px solid var(--line);border-radius:14px;padding:15px 16px;background:#fff;transition:box-shadow .18s,transform .18s,border-color .15s}
+.sg:hover{box-shadow:0 6px 20px rgba(20,16,12,.07);transform:translateY(-2px);border-color:var(--line-md)}
+.sg-ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:17px;background:var(--bg-soft);border:1px solid var(--line);flex-shrink:0}
+.sg-t{font-size:13.5px;font-weight:700;margin-bottom:2px;font-family:var(--display)}
+.sg-d{font-size:12px;color:var(--ink-2);line-height:1.45}
+.es-all{margin-top:18px;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:var(--orange-dk);padding:9px 16px;border:1px solid var(--orange-md);border-radius:11px;background:var(--orange-lt)}
+.es-all:hover{background:var(--orange-md)}
+
+/* prototype previews (unchanged structure) */
+.pv-phone{width:264px;margin:6px auto 4px;border:9px solid #0b0b16;border-radius:36px;background:#0b0b16;overflow:hidden;box-shadow:0 16px 44px rgba(20,16,40,.26)}
+.pv-screen{background:#0b0b16;padding-bottom:6px}
+.pvm-status{display:flex;justify-content:space-between;padding:9px 18px 6px;font-size:10px;font-weight:600;color:#fff}
+.pvm-head{display:flex;align-items:center;justify-content:space-between;padding:2px 16px 12px;color:#fff}
+.pvm-hi{font-size:13px;font-weight:600;opacity:.8}.pvm-hi b{display:block;font-family:var(--display);font-size:16px;font-weight:700;opacity:1}
+.pvm-pic{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#FF8A4C,#FF631F);display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff}
+.pvm-bal{margin:0 16px 14px;background:linear-gradient(135deg,#2b2350,#5b3a7a);border-radius:18px;padding:17px 18px;color:#fff}
+.pvm-bal .l{font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:.06em}
+.pvm-bal .v{font-family:var(--display);font-size:30px;font-weight:700;letter-spacing:-.02em;margin-top:3px}
+.pvm-bal .row{display:flex;justify-content:space-between;align-items:center;margin-top:11px}
+.pvm-bal .chg{font-size:11px;color:#9ff5c0}.pvm-bal .card4{font-family:var(--mono);font-size:11px;opacity:.7}
+.pvm-acts{display:flex;justify-content:space-between;padding:0 18px 14px}
+.pvm-act{display:flex;flex-direction:column;align-items:center;gap:6px;color:#fff}
+.pvm-act .c{width:46px;height:46px;border-radius:50%;background:rgba(255,255,255,.1);display:grid;place-items:center;font-size:18px}
+.pvm-act .c.pri{background:var(--orange)}
+.pvm-act span{font-size:10px;opacity:.85}
+.pvm-sheet{background:#fff;border-radius:22px 22px 0 0;padding:14px 16px 8px;min-height:150px}
+.pvm-sec{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:10px;display:flex;justify-content:space-between}
+.pvm-sec span{font-size:11px;color:var(--orange-dk);font-weight:600}
+.pvm-tx{display:flex;align-items:center;gap:11px;margin-bottom:11px}
+.pvm-tx .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:15px;background:var(--bg-soft)}
+.pvm-tx .t{flex:1}.pvm-tx .n{font-size:12.5px;font-weight:600}.pvm-tx .s{font-size:10.5px;color:var(--ink-3)}
+.pvm-tx .a{font-size:12.5px;font-weight:700}.pvm-tx .a.plus{color:var(--green)}
+.pvm-tabs{display:flex;justify-content:space-between;padding:8px 18px 4px}
+.pvm-tab{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9px;color:var(--ink-3)}
+.pvm-tab.on{color:var(--orange)}.pvm-tab .ic{font-size:15px}
+.pv-browser{border:1px solid var(--line-md);border-radius:14px;overflow:hidden;background:#fff;box-shadow:0 12px 34px rgba(20,16,12,.12);margin:6px 0}
+.pv-bar{display:flex;align-items:center;gap:7px;padding:9px 13px;background:var(--bg-soft);border-bottom:1px solid var(--line)}
+.pv-dots{display:flex;gap:5px}.pv-dots i{width:9px;height:9px;border-radius:50%;display:block}
+.pv-url{flex:1;background:#fff;border:1px solid var(--line);border-radius:7px;padding:4px 11px;font-size:11px;color:var(--ink-3);font-family:var(--mono)}
+.pvw-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid var(--line)}
+.pvw-logo{font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:-.02em}
+.pvw-links{display:flex;gap:16px;font-size:12px;color:var(--ink-2)}
+.pvw-btn{background:var(--ink);color:#fff;font-size:12px;font-weight:600;padding:7px 15px;border-radius:9px}
+.pvw-hero{text-align:center;padding:42px 30px 34px;background:radial-gradient(130% 110% at 50% 0,#EDEAF4,#fff 66%)}
+.pvw-badge{display:inline-block;font-size:11px;font-weight:700;color:var(--lime-ink);background:var(--lime);padding:5px 13px;border-radius:100px;margin-bottom:16px}
+.pvw-hero h1{font-family:var(--display);font-size:32px;font-weight:700;letter-spacing:-.03em;line-height:1.08;max-width:540px;margin:0 auto 12px}
+.pvw-hero p{font-size:15px;color:var(--ink-2);max-width:440px;margin:0 auto 22px}
+.pvw-cta{display:inline-flex;gap:10px}
+.pvw-cta .b1{background:var(--orange);color:#fff;font-weight:600;padding:12px 22px;border-radius:11px;font-size:14px}
+.pvw-cta .b2{background:#fff;color:var(--ink);font-weight:600;padding:12px 22px;border-radius:11px;font-size:14px;border:1px solid var(--line-md)}
+.pvw-feat{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;padding:30px}
+.pvw-fcard{border:1px solid var(--line);border-radius:14px;padding:18px 16px}
+.pvw-fico{width:38px;height:38px;border-radius:10px;background:#EDEAF4;display:grid;place-items:center;font-size:18px;margin-bottom:11px}
+.pvw-fcard h4{font-family:var(--display);font-size:14px;font-weight:700;margin-bottom:5px}
+.pvw-fcard p{font-size:12px;color:var(--ink-2);line-height:1.5}
+.pvw-strip{display:flex;justify-content:center;gap:40px;padding:22px 30px;border-top:1px solid var(--line);background:var(--bg-soft);flex-wrap:wrap}
+.pvw-stat .v{font-family:var(--display);font-size:24px;font-weight:700;text-align:center}.pvw-stat .l{font-size:11px;color:var(--ink-3);text-align:center}
+.pvc{margin:6px 0}.pvc-card{border:1px solid var(--line-md);border-radius:16px;overflow:hidden;max-width:420px;box-shadow:0 10px 28px rgba(20,16,12,.1)}
+.pvc-top{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);background:linear-gradient(135deg,#2b2350,#5b3a7a);color:#fff}
+.pvc-top h4{font-family:var(--display);font-size:15px;font-weight:700}.pvc-top .c4{font-family:var(--mono);font-size:11px;opacity:.7}
+.pvc-toggle{width:40px;height:22px;border-radius:100px;background:var(--orange);position:relative}
+.pvc-toggle::after{content:'';position:absolute;right:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff}
+.pvc-toggle.off{background:var(--line-md)}.pvc-toggle.off::after{right:auto;left:3px}
+.pvc-row{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;border-bottom:1px solid var(--line)}
+.pvc-row:last-child{border-bottom:none}
+.pvc-rl{font-size:13px;font-weight:500}.pvc-rs{font-size:11px;color:var(--ink-3)}
+.pvc-bar{height:7px;border-radius:5px;background:var(--bg-soft);overflow:hidden;width:120px}.pvc-bar i{display:block;height:100%;background:var(--orange);border-radius:5px}
+.pv-visual{margin:6px 0;display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+
+/* tasks page */
+.tasks-search{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line-md);border-radius:12px;padding:11px 15px;margin-bottom:16px;transition:border-color .15s,box-shadow .15s}
+.tasks-search:focus-within{border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-lt)}
+.tasks-search svg{width:17px;height:17px;stroke-width:2;color:var(--ink-3);flex-shrink:0}
+.tasks-search input{flex:1;border:none;outline:none;font-size:14px;background:transparent;color:var(--ink)}
+.gal-badge2{display:inline-block;font-size:9.5px;font-weight:600;color:var(--ink-3);background:var(--bg-soft);border:1px solid var(--line);padding:2px 7px;border-radius:5px;margin-top:6px;margin-right:5px}
+.codeblock{background:#0f1117;border-radius:10px;padding:13px 15px;overflow:auto;margin:9px 0 12px;font-family:var(--mono);font-size:11.5px;line-height:1.7;color:#cdd3df;white-space:pre}
+.codeblock .k{color:#ff9d6b}.codeblock .c{color:#6b7280}.codeblock .s{color:#9ff5c0}.codeblock .f{color:#82b8ff}
+
+/* overlays */
+.overlay{position:fixed;inset:0;background:rgba(20,16,12,.42);backdrop-filter:blur(4px);display:none;z-index:100;animation:fade .2s}
+.overlay.open{display:block}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.sheet{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(820px,94vw);max-height:86vh;background:var(--bg);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.3);display:flex;flex-direction:column;overflow:hidden;animation:pop .25s ease}
+@keyframes pop{from{opacity:0;transform:translate(-50%,-46%) scale(.97)}to{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.sheet-head{padding:22px 26px 16px;border-bottom:1px solid var(--line);position:relative}
+.sheet-title{font-size:21px;font-weight:700;letter-spacing:-.02em}
+.sheet-sub{font-size:13px;color:var(--ink-2);margin-top:3px}
+.sheet-close{position:absolute;top:18px;right:18px;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;color:var(--ink-2);background:var(--bg-soft)}
+.sheet-close:hover{background:var(--line-md)}
+.sheet-body{overflow-y:auto;padding:18px 26px 26px}
+.gal-cat{font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-3);margin:20px 0 11px;display:flex;align-items:center;gap:9px}
+.gal-cat:first-child{margin-top:0}.gal-cat .ln{flex:1;height:1px;background:var(--line)}
+.gal-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.gal-skill{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:13px;padding:13px 14px;text-align:left;transition:border-color .15s,box-shadow .16s,transform .16s;background:#fff}
+.gal-skill:hover{border-color:var(--orange-md);box-shadow:0 5px 16px rgba(20,16,12,.07);transform:translateY(-1px)}
+.gal-ico{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-size:16px;background:var(--bg-soft);border:1px solid var(--line);flex-shrink:0}
+.gal-t{font-size:13px;font-weight:700;font-family:var(--display);margin-bottom:2px}
+.gal-d{font-size:11.5px;color:var(--ink-2);line-height:1.4}
+.gal-badge{font-size:9px;font-weight:700;font-family:var(--mono);color:var(--green);background:var(--green-lt);padding:2px 6px;border-radius:5px;margin-top:6px;display:inline-block}
+.mini{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(460px,92vw);background:var(--bg);border-radius:18px;padding:24px;box-shadow:0 24px 60px rgba(0,0,0,.28);animation:pop .22s ease}
+.mini h3{font-size:18px;font-weight:700;margin-bottom:5px}.mini p.d{font-size:13px;color:var(--ink-2);margin-bottom:18px}
+.field{margin-bottom:14px}.field label{font-size:12px;font-weight:600;display:block;margin-bottom:6px}
+.inp,.txa,.sel{width:100%;border:1px solid var(--line-md);border-radius:10px;padding:10px 13px;font-size:13.5px;background:#fff;color:var(--ink);transition:border-color .14s,box-shadow .14s}
+.inp:focus,.txa:focus,.sel:focus{outline:none;border-color:var(--orange);box-shadow:0 0 0 3px var(--orange-lt)}
+.txa{resize:vertical;min-height:70px;line-height:1.5}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mini-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 15px;border-radius:10px;font-size:13px;font-weight:600;transition:background .14s,border-color .14s,transform .1s}
+.btn svg{width:15px;height:15px;stroke-width:2}
+.btn-pri{background:var(--orange);color:#fff}.btn-pri:hover{background:var(--orange-dk)}.btn-pri:active{transform:translateY(1px)}
+.btn-gho{background:#fff;border:1px solid var(--line-md);color:var(--ink-2)}.btn-gho:hover{border-color:var(--orange-md);color:var(--ink)}
+.btn-sm{padding:7px 12px;font-size:12.5px}
+.expand{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:min(900px,94vw);max-height:90vh;background:var(--bg);border-radius:20px;box-shadow:0 30px 80px rgba(0,0,0,.3);overflow:hidden;display:flex;flex-direction:column;animation:pop .24s ease}
+.expand-head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line)}
+.expand-body{overflow:auto;padding:26px;background:var(--canvas);display:flex;justify-content:center}
+.toasts{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;align-items:center}
+.toast{background:var(--ink);color:#fff;padding:11px 17px;border-radius:11px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;box-shadow:0 10px 30px rgba(0,0,0,.25);animation:tin .3s ease}
+.toast svg{width:16px;height:16px;color:var(--lime)}
+@keyframes tin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.scrim{display:none}
+@media(max-width:860px){
+  :root{--sb-w:0px}
+  .app{grid-template-columns:1fr}
+  .sb{position:fixed;left:0;top:0;bottom:0;width:280px;transform:translateX(-100%);transition:transform .25s ease;box-shadow:0 0 40px rgba(0,0,0,.2)}
+  .sb.open{transform:none}.hamb{display:flex}
+  .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:35;opacity:0;visibility:hidden;transition:.2s}
+  .scrim.show{opacity:1;visibility:visible}
+  .sg-grid,.gal-grid,.pvw-feat,.quick-grid,.proj-grid{grid-template-columns:1fr}
+  .thread,.composer,.page,.proj-banner{padding-left:16px;padding-right:16px}
+  .online{position:static;margin-top:14px}
+  .proj-actions{position:static;margin-top:14px}
+}
+</style>
+</head>
+<body>
+<div class="scrim" id="scrim" onclick="toggleSb(false)"></div>
+
+<div class="app">
+  <aside class="sb" id="sb">
+    <div class="sb-top">
+      <div class="brand">
+        <div class="brand-mark"><svg width="20" height="20" viewBox="0 0 24 24"><path d="M3 13a9 9 0 0 1 18 0" fill="#fff" opacity="0.95"/><rect x="3" y="13" width="18" height="2.4" fill="#fff" opacity="0.6"/></svg></div>
+        <div class="brand-name">Product Space<b>команда Revolut</b></div>
+      </div>
+      <button class="new-chat" onclick="newChat()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg> Новый чат</button>
+    </div>
+    <div class="sb-nav">
+      <button class="sb-link" id="nav-dashboard" onclick="goView('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg> Дашборд</button>
+      <button class="sb-link" id="nav-tasks" onclick="goView('tasks')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg> Задачи <span class="ct" id="taskCount"></span></button>
+      <button class="sb-link" id="nav-artifacts" onclick="goView('artifacts')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></svg> Артефакты команды</button>
+    </div>
+    <div class="sb-section">Проекты <span class="add" onclick="openNewProject()" title="Новый проект">+</span></div>
+    <div class="proj-list" id="projList"></div>
+    <div class="sb-section">Недавние чаты</div>
+    <div class="chats scrollbar" id="chatList"></div>
+    <div class="sb-bottom">
+      <div class="prod-chip" onclick="openProfile()">
+        <div class="prod-ava" id="prodAva">Д</div>
+        <div class="prod-meta"><div class="prod-l">Продукт</div><div class="prod-n" id="prodName">Дебетовая карта</div></div>
+        <svg class="gear" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15H4.5a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 6 9.4l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 11 7.6V4.5a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 11h.1a2 2 0 1 1 0 4h-.1z"/></svg>
+      </div>
+      <div class="user-row"><div class="user-ava">АР</div><div><div class="user-n">Арман</div><div class="user-p">Head of Product · Revolut</div></div></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <button class="hamb" onclick="toggleSb(true)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      <div class="tb-title" id="tbTitle">Дашборд</div>
+      <div class="tb-model"><span class="d"></span> контекст: <b style="margin-left:4px" id="tbProd">Дебетовая карта</b></div>
+    </div>
+
+    <div class="scroll view active" id="view-dashboard"><div class="page" id="dashHost"></div></div>
+    <div class="scroll view" id="view-project"><div class="page" id="projHost"></div></div>
+    <div class="scroll view" id="view-artifacts"><div class="page" id="artHost"></div></div>
+    <div class="scroll view" id="view-tasks"><div class="page" id="tasksHost"></div></div>
+
+    <div class="view" id="view-chat" style="flex:1;display:none;flex-direction:column;min-height:0">
+      <div class="thread-wrap scrollbar" id="threadWrap"><div id="projBanner"></div><div id="threadHost"></div></div>
+      <div class="composer-wrap"><div class="composer">
+        <div class="armed" id="armed"><div class="armed-chip"><span id="armedIco">⚡</span><span>Задача: <b id="armedName"></b></span><span class="x" onclick="disarm()"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6 6 18M6 6l12 12"/></svg></span></div></div>
+        <div class="comp-box">
+          <textarea class="comp-input" id="input" rows="1" placeholder="Спросите что угодно или выберите задачу…" oninput="autoGrow(this);toggleSend()" onkeydown="onKey(event)"></textarea>
+          <div class="comp-bar">
+            <button class="comp-tool" onclick="openGallery()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg> Задачи</button>
+            <button class="comp-icon" title="Прикрепить" onclick="toast('Прикрепление файлов — заглушка прототипа')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21.44 11.05 12.25 20.24a6 6 0 0 1-8.49-8.49l8.49-8.49a4 4 0 0 1 5.66 5.66l-8.49 8.49a2 2 0 0 1-2.83-2.83l7.78-7.78"/></svg></button>
+            <div class="comp-spacer"></div>
+            <button class="send" id="sendBtn" disabled onclick="send()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 19V5M5 12l7-7 7 7"/></svg></button>
+          </div>
+        </div>
+        <div class="comp-hint" id="compHint">Свободный чат и задачи работают вместе. Контекст продукта подставляется автоматически.</div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="toasts" id="toasts"></div>
+
+<script>
+const TEAM={АР:'#FF631F',ЛК:'#2d6cdf',ИП:'#0d8a8a',МД:'#b0299a',ДА:'#2f9e6b',СД:'#7a5cd6'};
+const state={
+  profile:{name:'Дебетовая карта',stage:'Масштабирование',
+    desc:'Дебетовая карта Revolut: мультивалютные траты по честному курсу, кэшбэк, мгновенные пуши, лимиты и виртуальные карты — основа повседневных финансов пользователя.',
+    audience:'Активные пользователи 25–45, часто платят и переводят за рубеж; плюс малый бизнес.',
+    comp:'Monzo, N26, Wise, Nubank'},
+  chats:[], current:null, armed:null, artifacts:[], projects:[], activeProject:null, artFilter:'all', taskCat:'all', taskQuery:'', recentTasks:[]
+};
+function P(){return state.profile;}
+function comps(){return P().comp.split(',').map(s=>s.trim()).filter(Boolean);}
+
+/* ===== TASKS ===== */
+const CATS=[{id:'pm',name:'Стратегия и продукт'},{id:'pmm',name:'Маркетинг и GTM'},{id:'res',name:'Исследования'},{id:'data',name:'Аналитика'},{id:'dev',name:'Разработка'},{id:'build',name:'Прототипы и визуал'}];
+const SKILLS={
+  comp:{cat:'pm',ico:'⚔️',name:'Конкурентный анализ',desc:'Позиционирование, фичи, тарифы, слабые места конкурента.',kind:'doc'},
+  jtbd:{cat:'pm',ico:'🎯',name:'JTBD / персоны',desc:'Functional / emotional / social jobs, боли, триггеры.',kind:'doc'},
+  strategy:{cat:'pm',ico:'🧭',name:'Стратегия продукта',desc:'Проблема, инсайты, приоритеты, метрики успеха.',kind:'doc'},
+  hyp:{cat:'pm',ico:'🧪',name:'Гипотезы',desc:'Структурированный список с валидацией и метриками.',kind:'doc'},
+  roadmap:{cat:'pm',ico:'🗺️',name:'Приоритизация',desc:'Backlog по RICE, Now / Next / Later.',kind:'doc'},
+  gtm:{cat:'pmm',ico:'🚀',name:'GTM-план',desc:'Сегменты, каналы, messaging, приоритеты запуска.',kind:'doc'},
+  messaging:{cat:'pmm',ico:'📣',name:'Позиционирование',desc:'Message House, ценностные опоры, формулировки.',kind:'doc'},
+  persona:{cat:'pmm',ico:'🧑',name:'Персоны',desc:'Профили пользователей: цели, боли, поведение.',kind:'doc'},
+  copy:{cat:'pmm',ico:'✍️',name:'Тексты лендинга',desc:'Структура и копирайт страницы под сегмент.',kind:'doc'},
+  desk:{cat:'res',ico:'📚',name:'Desk research',desc:'Кабинетное исследование рынка по открытым источникам.',kind:'doc'},
+  synth:{cat:'res',ico:'🧵',name:'Синтез интервью',desc:'Affinity-темы, частота, инсайты из заметок.',kind:'doc'},
+  custdev:{cat:'res',ico:'🔍',name:'Custdev-гайд',desc:'Скрипт интервью под гипотезу + анализ.',kind:'doc'},
+  survey:{cat:'res',ico:'📊',name:'Анализ опроса',desc:'Сегменты, ключевые выводы и действия из данных.',kind:'doc'},
+  discovery:{cat:'res',ico:'🧭',name:'Discovery-план',desc:'Что проверяем по проблеме, продукту, рынку, конкурентам.',kind:'doc'},
+  mobile:{cat:'build',ico:'📱',name:'Прототип: мобильный компонент',desc:'Рабочее превью экрана банковского приложения.',kind:'mobile'},
+  web:{cat:'build',ico:'🖥️',name:'Прототип: веб-компонент',desc:'Превью UI-компонента для веба.',kind:'web'},
+  landing:{cat:'build',ico:'🌐',name:'Прототип лендинга',desc:'Живой превью лендинга фичи под сегмент.',kind:'landing'},
+  visual:{cat:'build',ico:'🎨',name:'Создание визуала',desc:'Графика для запуска / соцсетей в стиле продукта.',kind:'visual'},
+  sql:{cat:'data',ico:'🗄️',name:'SQL / анализ данных',desc:'Готовый SQL-запрос под вопрос и что он покажет.',kind:'doc'},
+  metrics:{cat:'data',ico:'📐',name:'Метрики и события',desc:'Tracking plan: какие события и свойства логировать.',kind:'doc'},
+  abtest:{cat:'data',ico:'⚗️',name:'Дизайн A/B-теста',desc:'Гипотеза, варианты, метрики, размер выборки.',kind:'doc'},
+  cohort:{cat:'data',ico:'📈',name:'Когортный анализ',desc:'Retention по когортам и интерпретация.',kind:'doc'},
+  funnel:{cat:'data',ico:'🔻',name:'Анализ воронки',desc:'Шаги, конверсии и узкие места.',kind:'doc'},
+  codereview:{cat:'dev',ico:'🧐',name:'Код-ревью',desc:'Чек-лист и замечания к коду / PR по важности.',kind:'doc'},
+  techspec:{cat:'dev',ico:'📝',name:'Тех-спецификация (RFC)',desc:'Контекст, дизайн, модель данных, риски, выкат.',kind:'doc'},
+  apispec:{cat:'dev',ico:'🔌',name:'API-контракт',desc:'Эндпоинты и пример запроса / ответа.',kind:'doc'},
+  bug:{cat:'dev',ico:'🐞',name:'Разбор инцидента',desc:'RCA: влияние, таймлайн, причина, фикс, профилактика.',kind:'doc'},
+  tests:{cat:'dev',ico:'🧷',name:'Тест-кейсы',desc:'Сценарии и ожидаемые результаты для проверки.',kind:'doc'},
+};
+const HERO_SUGGEST=['comp','synth','mobile','gtm'];
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+function gv(id){return document.getElementById(id).value;}
+
+/* ===== DOC GENERATORS ===== */
+const DOC={
+  comp(b){const t=b||comps()[0]||'Monzo';return`
+    <h2><span class="n">01</span> Позиционирование — ${esc(t)}</h2>
+    <p><span class="editable" contenteditable="true">${esc(t)} строит образ простого современного необанка с акцентом на ежедневные траты и удобство карты. Сильны в UX повседневных операций, но накопительные продукты — слабее.</span></p>
+    <div class="box"><b>Наш зазор:</b> пользователь хочет, чтобы остаток на карте «работал». Накопительный счёт, привязанный к карте, закрывает это лучше, чем у ${esc(t)}.</div>
+    <h2><span class="n">02</span> Сравнение возможностей</h2>
+    <div class="tbl"><table><tr><th>Направление</th><th>${esc(t)}</th><th>Наш продукт</th></tr>
+    <tr><td class="strong">Дебетовая карта</td><td>Сильная база, кэшбэк</td><td>Кэшбэк + мультивалюта + лимиты</td></tr>
+    <tr><td class="strong">Накопления</td><td>Базовые, отдельно</td><td>Привязаны к карте, ежедневные %</td></tr>
+    <tr><td class="strong">Обмен валют</td><td>Ограниченно</td><td>По честному курсу</td></tr>
+    <tr><td class="strong">Гибкость снятия</td><td>Есть</td><td>Без блокировок</td></tr></table></div>
+    <h2><span class="n">03</span> Слабые места и наш wedge</h2>
+    <ul><li><span class="pill p-hi">высокий</span>Накопления оторваны от карты → у нас единый поток</li>
+    <li><span class="pill p-mid">средний</span>Слабый мультивалютный сценарий → наш курс</li>
+    <li><span class="pill p-lo">паритет</span>UX повседневных трат — обязателен не хуже</li></ul>
+    <div class="box"><b>Вывод:</b> продавать связку «карта + накопления в одном месте», где остаток приносит процент без лишних движений.</div>`;},
+  jtbd(b){const seg=b||'Пользователь, который держит остаток на карте';return`
+    <div class="box"><b>Главный job:</b> «Когда деньги просто лежат на карте, я хочу, чтобы они приносили процент без лишних действий и оставались доступны в любой момент, чтобы не выбирать между доходом и свободой.»</div>
+    <h2><span class="n">01</span> Functional jobs</h2><ul><li>Получать процент на остаток автоматически</li><li>Снимать деньги когда нужно, без блокировок</li><li>Видеть карту и накопления в одном месте</li></ul>
+    <h2><span class="n">02</span> Emotional jobs</h2><ul><li>Не чувствовать, что деньги «теряют ценность лёжа»</li><li>Спокойствие — доступ к деньгам не заперт</li></ul>
+    <h2><span class="n">03</span> Social jobs</h2><ul><li>Быть «финансово грамотным» без усилий</li></ul>
+    <h2><span class="n">04</span> Боли и триггеры</h2><div class="tbl"><table><tr><th>Боль</th><th>Триггер</th></tr>
+    <tr><td>Остаток лежит без дохода</td><td>Увидел ставку у конкурента</td></tr>
+    <tr><td>Вклады «запирают» деньги</td><td>Срочно понадобились средства</td></tr>
+    <tr><td>Накопления в другом приложении</td><td>Лень переключаться</td></tr></table></div>`;},
+  strategy(b){return`
+    <div class="box"><b>Фокус периода:</b> ${esc(b||'превратить дебетовую карту в primary через накопления и частоту трат')}</div>
+    <h2><span class="n">01</span> Проблема</h2><p>Карту используют как «вторую для трат», основной остаток держат в банке. Нужно дать причину держать деньги у нас.</p>
+    <h2><span class="n">02</span> Инсайты</h2><ul><li>Процент на остаток + гибкость снятия = причина держать деньги</li><li>Частота трат — лучший предиктор удержания</li><li>Связка «карта + накопления» сильнее монопродуктов</li></ul>
+    <h2><span class="n">03</span> Приоритеты</h2><ul><li><span class="pill p-hi">P0</span>Накопительный счёт с ежедневными %</li><li><span class="pill p-mid">P1</span>Авто-откладывание с трат (round-up)</li><li><span class="pill p-lo">P2</span>Аналитика трат и бюджеты</li></ul>
+    <h2><span class="n">04</span> Метрики</h2><div class="tbl"><table><tr><th>Метрика</th><th>Цель</th></tr><tr><td>Доля primary-аккаунтов</td><td>+8 п.п.</td></tr><tr><td>Средний остаток на счёте</td><td>+25%</td></tr><tr><td>Retention M3</td><td>≥ 80%</td></tr></table></div>`;},
+  hyp(b){return`<p>Гипотезы по теме: <b>${esc(b||'накопительный счёт при дебетовой карте')}</b>.</p>
+    <div class="tbl"><table><tr><th>Гипотеза</th><th>Проверка</th><th>Метрика</th></tr>
+    <tr><td class="strong">Ежедневные % поднимут остаток на карте</td><td>A/B запуск счёта</td><td>Средний остаток</td></tr>
+    <tr><td class="strong">Гибкое снятие снимает барьер «деньги заперты»</td><td>Опрос + поведение</td><td>% открывших счёт</td></tr>
+    <tr><td class="strong">Round-up с трат увеличит частоту операций</td><td>Когорта с фичей</td><td>Транзакций/мес</td></tr></table></div>
+    <div class="box"><b>Приоритет:</b> начать с гипотезы про ежедневные % — прямо влияет на остаток и primary-статус.</div>`;},
+  roadmap(b){return`<p>Приоритизация по RICE: <b>${esc(b||'накопительный счёт')}</b>.</p>
+    <h2><span class="n">Now</span> Сейчас</h2><ul><li>Накопительный счёт с ежедневными % <span class="pill p-hi">RICE 98</span></li><li>Онбординг в 2 тапа <span class="pill p-mid">RICE 76</span></li></ul>
+    <h2><span class="n">Next</span> Дальше</h2><ul><li>Round-up откладывание с трат</li><li>Цели накоплений (vaults)</li></ul>
+    <h2><span class="n">Later</span> Потом</h2><ul><li>Совместные накопления</li><li>Повышенная ставка для активных по карте</li></ul>`;},
+  gtm(b){const l=b||'запуск накопительного счёта при дебетовой карте';return`
+    <h2><span class="n">01</span> Что выводим</h2><p><b>${esc(l)}</b></p>
+    <h2><span class="n">02</span> ICP и сегмент</h2><ul><li><b>Кто:</b> активные держатели карты с остатком, который «просто лежит»</li><li><b>Триггер:</b> хотят доход без потери доступа к деньгам</li></ul>
+    <h2><span class="n">03</span> Messaging</h2><div class="box"><span class="editable" contenteditable="true">Остаток на карте теперь приносит процент каждый день. Деньги под рукой — снимайте в любой момент, без блокировок.</span></div>
+    <h2><span class="n">04</span> Каналы</h2><ul><li><span class="pill p-hi">P0</span>In-app промо держателям карты с остатком, push по сегменту</li><li><span class="pill p-mid">P1</span>Перформанс + финтех-инфлюенсеры</li><li><span class="pill p-lo">P2</span>PR про ставку и гибкость</li></ul>
+    <h2><span class="n">05</span> План на квартал</h2><div class="tbl"><table><tr><th>Период</th><th>Фокус</th><th>Результат</th></tr><tr><td>Нед. 1–3</td><td>Тизер + in-app</td><td>25% увидели</td></tr><tr><td>Нед. 4–8</td><td>Полный запуск</td><td>15% открыли счёт</td></tr><tr><td>Нед. 9–12</td><td>Round-up и масштаб</td><td>+25% к остаткам</td></tr></table></div>`;},
+  messaging(b){return`<h2><span class="n">01</span> Главное обещание</h2><div class="box"><span class="editable" contenteditable="true">Карта, на которой деньги работают каждый день — и всегда под рукой.</span></div>
+    <h2><span class="n">02</span> Message House</h2><div class="tbl"><table><tr><th>Опора</th><th>Что говорим</th><th>Доказательство</th></tr>
+    <tr><td class="strong">Доход без усилий</td><td>Ежедневные проценты</td><td>Начисление каждый день</td></tr>
+    <tr><td class="strong">Свобода</td><td>Снимайте когда нужно</td><td>Без блокировок</td></tr>
+    <tr><td class="strong">Всё в одном</td><td>Карта и накопления вместе</td><td>Один экран</td></tr></table></div>
+    <h2><span class="n">03</span> По аудитории</h2><ul><li><b>Сберегатель:</b> «Деньги растут каждый день»</li><li><b>Транжира:</b> «Откладывает за тебя с каждой покупки»</li></ul>`;},
+  persona(b){const seg=b||'держатель карты с остатком';return`<h2><span class="n">01</span> Кто это</h2><p><span class="editable" contenteditable="true">Марина, 32, маркетолог. Держит на карте ~€3 000 «на жизнь», вклады не открывает — боится, что деньги заблокируют. Раздражает, что остаток не приносит ничего.</span></p>
+    <h2><span class="n">02</span> Цели</h2><ul><li>Чтобы деньги приносили доход</li><li>Сохранить мгновенный доступ к средствам</li><li>Не разбираться в сложных продуктах</li></ul>
+    <h2><span class="n">03</span> Боли</h2><ul><li>Остаток лежит без процента</li><li>Вклады «запирают» деньги</li></ul>
+    <h2><span class="n">04</span> Возражения</h2><ul><li>«А вдруг не смогу быстро снять?»</li><li>«Маленький процент — не стоит возни»</li></ul>`;},
+  copy(b){return`<h2><span class="n">Hero</span></h2><p><b>H1:</b> <span class="editable" contenteditable="true">Деньги на карте, которые работают каждый день</span></p>
+    <p><b>Подзаголовок:</b> <span class="editable" contenteditable="true">Накопительный счёт прямо в карте Revolut. Ежедневные проценты, снятие в любой момент — без блокировок.</span></p><p><b>CTA:</b> Открыть счёт за минуту</p>
+    <h2><span class="n">Боль</span></h2><ul><li>Остаток просто лежит без дохода</li><li>Вклады «запирают» деньги</li><li>Накопления в отдельном приложении</li></ul>
+    <h2><span class="n">Как</span></h2><ul><li>Проценты начисляются каждый день</li><li>Снимайте когда нужно</li><li>Всё в одном экране с картой</li></ul>`;},
+  desk(b){const topic=b||'рынок накопительных продуктов необанков';return`<p>Кабинетное исследование: <b>${esc(topic)}</b>. Источники — прайсы конкурентов, отзывы сторов, отчёты.</p>
+    <h2><span class="n">01</span> Размер и динамика</h2><ul><li>Спрос на гибкие сбережения с мгновенным доступом растёт</li><li>Ставки стали аргументом переключения между необанками</li><li>Связка «карта + накопления» — заметный тренд</li></ul>
+    <h2><span class="n">02</span> Ключевые находки</h2><div class="tbl"><table><tr><th>Тема</th><th>Находка</th><th>Источник</th></tr>
+    <tr><td>Драйвер</td><td>Ставка + мгновенное снятие</td><td>Отзывы App Store</td></tr>
+    <tr><td>Барьер</td><td>Страх блокировки средств</td><td>Reddit / форумы</td></tr>
+    <tr><td>Тренд</td><td>Round-up откладывание с трат</td><td>Обзоры финтеха</td></tr></table></div>
+    <h2><span class="n">03</span> Выводы</h2><ul><li>Гибкость снятия — ключевой дифференциатор</li><li>Проверить чувствительность к размеру ставки в интервью</li></ul>
+    <div class="box"><b>Ограничение:</b> desk research даёт направление; готовность держать деньги подтверждается только разговорами.</div>`;},
+  synth(b){return`<p>Синтез по заметкам интервью${b?`: <b>${esc(b)}</b>`:''}. Affinity-темы с частотой.</p>
+    <h2><span class="n">01</span> Темы по частоте</h2><div class="tbl"><table><tr><th>Тема</th><th>Частота</th><th>Сигнал</th></tr>
+    <tr><td class="strong">Боятся, что деньги «запрут»</td><td>9 / 12</td><td><span class="pill p-hi">сильный</span></td></tr>
+    <tr><td class="strong">Хотят процент на остаток</td><td>8 / 12</td><td><span class="pill p-hi">сильный</span></td></tr>
+    <tr><td class="strong">Не хотят отдельного приложения</td><td>6 / 12</td><td><span class="pill p-mid">средний</span></td></tr>
+    <tr><td class="strong">Ставка должна быть «заметной»</td><td>4 / 12</td><td><span class="pill p-lo">слабее</span></td></tr></table></div>
+    <h2><span class="n">02</span> Показательные цитаты</h2><ul><li>«Деньги просто лежат, но снять должен мочь в любой момент» <i>— перефразировано</i></li><li>«Отдельный вклад не открою — лень и страшно» <i>— перефразировано</i></li></ul>
+    <h2><span class="n">03</span> Инсайты и рекомендации</h2><ul><li>Гибкость снятия — выносить в коммуникацию №1</li><li>Накопления встроить в экран карты, не делать отдельным продуктом</li><li>Подсветить «ежедневное начисление» как доказательство</li></ul>`;},
+  custdev(b){const h=b||'Барьер к накоплениям — страх потерять доступ к деньгам, а не размер ставки';return`
+    <div class="box"><b>Проверяемая гипотеза:</b> ${esc(h)}</div>
+    <h2><span class="n">01</span> Цель</h2><p>Понять реальный барьер к накоплениям. Про их деньги и привычки, без презентации фичи.</p>
+    <h2><span class="n">02</span> Разогрев</h2><ul><li>Где сейчас держите остаток и почему именно там?</li><li>Открывали ли вклады? Что понравилось / оттолкнуло?</li></ul>
+    <h2><span class="n">03</span> Проблемный блок <span class="pill p-hi">ядро</span></h2><ul><li>Что должно быть, чтобы вы держали деньги у нас?</li><li>Был случай, когда деньги были нужны срочно, а они «заперты»?</li><li>Что важнее — ставка повыше или возможность снять в любой момент?</li></ul>
+    <h2><span class="n">04</span> Как анализировать</h2><div class="tbl"><table><tr><th>Сигнал</th><th>Что значит</th></tr><tr><td>Называет страх блокировки</td><td>Барьер — доступ, не ставка</td></tr><tr><td>Готов на меньший %, но с гибкостью</td><td>Гибкость — ядро ценности</td></tr><tr><td>«Дайте максимум ставку»</td><td>Сегмент про доходность</td></tr></table></div>
+    <div class="box"><b>Критерий:</b> 7/12 ставят доступ выше ставки → коммуникация про гибкость, а не про процент.</div>`;},
+  survey(b){return`<p>Анализ опроса${b?`: <b>${esc(b)}</b>`:''}. n = 286, держатели карты.</p>
+    <h2><span class="n">01</span> Ключевые метрики</h2><div class="tbl"><table><tr><th>Показатель</th><th>Значение</th></tr><tr><td>Держат остаток без дохода</td><td>68%</td></tr><tr><td>Главное — мгновенное снятие</td><td>61%</td></tr><tr><td>Откроют счёт, если он в той же карте</td><td>57%</td></tr></table></div>
+    <h2><span class="n">02</span> По сегментам</h2><ul><li><b>Сберегатели:</b> важна ставка</li><li><b>Транжиры:</b> заходит round-up «копит за меня»</li></ul>
+    <h2><span class="n">03</span> Действия</h2><ul><li>Запуск встроенного счёта — приоритет</li><li>Коммуникация «деньги под рукой» снимает топ-барьер</li></ul>`;},
+  discovery(b){return`<p>Discovery-план${b?`: <b>${esc(b)}</b>`:''}. Что проверяем перед запуском накопительного счёта.</p>
+    <h2><span class="n">01</span> По проблеме</h2><ul><li>Что мешает держать остаток у нас: доступ, доверие или ставка?</li><li>У кого барьер ниже — сберегатели или транжиры?</li></ul>
+    <h2><span class="n">02</span> По продукту</h2><ul><li>Какой формат воспринимается как «надёжно и доступно»?</li><li>Что важнее — ставка или гибкость снятия?</li></ul>
+    <h2><span class="n">03</span> По рынку</h2><ul><li>Ставки конкурентов и регуляторные ограничения?</li><li>Где спрос выше по странам?</li></ul>
+    <h2><span class="n">04</span> По конкурентам</h2><ul><li>Как Monzo/N26 связывают карту и накопления?</li><li>Есть ли неочевидные альтернативы?</li></ul>`;},
+  sql(b){return`<p>Запрос под вопрос: <b>${esc(b||'воронка открытия накопительного счёта держателями карты')}</b>.</p>
+    <div class="codeblock"><span class="c">-- Доля держателей карты, открывших накопительный счёт, по неделям</span>\n<span class="k">SELECT</span>\n  date_trunc(<span class="s">'week'</span>, c.first_card_at)        <span class="k">AS</span> cohort_week,\n  count(<span class="k">DISTINCT</span> c.user_id)                 <span class="k">AS</span> card_holders,\n  count(<span class="k">DISTINCT</span> s.user_id)                 <span class="k">AS</span> opened_savings,\n  <span class="f">round</span>(100.0 * count(<span class="k">DISTINCT</span> s.user_id)\n        / nullif(count(<span class="k">DISTINCT</span> c.user_id), 0), 1) <span class="k">AS</span> pct_opened\n<span class="k">FROM</span> card_holders c\n<span class="k">LEFT JOIN</span> savings_accounts s\n  <span class="k">ON</span> s.user_id = c.user_id\n <span class="k">AND</span> s.opened_at &lt; c.first_card_at + <span class="k">interval</span> <span class="s">'30 days'</span>\n<span class="k">GROUP BY</span> 1\n<span class="k">ORDER BY</span> 1;</div>
+    <h2><span class="n">01</span> Что покажет</h2><ul><li>Конверсию «держатель карты → открыл счёт» в первые 30 дней</li><li>Динамику по недельным когортам — растёт ли adoption</li><li>Базу для сравнения до/после запуска промо</li></ul>
+    <div class="box"><b>Дальше:</b> разложить pct_opened по сегментам (остаток на карте, страна) — где конверсия проседает.</div>`;},
+  metrics(b){return`<p>Tracking plan для: <b>${esc(b||'накопительный счёт')}</b>. Что логировать, чтобы потом всё посчитать.</p>
+    <div class="tbl"><table><tr><th>Событие</th><th>Когда</th><th>Свойства</th></tr>
+    <tr><td class="strong">savings_promo_viewed</td><td>Показ промо в приложении</td><td>placement, balance_bucket</td></tr>
+    <tr><td class="strong">savings_open_started</td><td>Открыл экран оформления</td><td>source</td></tr>
+    <tr><td class="strong">savings_account_opened</td><td>Счёт создан</td><td>initial_amount, currency</td></tr>
+    <tr><td class="strong">savings_topup</td><td>Пополнение</td><td>amount, method (manual/roundup)</td></tr>
+    <tr><td class="strong">savings_withdraw</td><td>Снятие</td><td>amount, time_to_withdraw</td></tr>
+    <tr><td class="strong">daily_interest_accrued</td><td>Ежедневное начисление</td><td>amount, balance</td></tr></table></div>
+    <div class="box"><b>Принцип:</b> событие = факт, свойства = разрезы для анализа. Без balance_bucket нельзя будет связать adoption с размером остатка.</div>`;},
+  abtest(b){return`<p>Дизайн эксперимента: <b>${esc(b||'промо накопительного счёта на главном экране')}</b>.</p>
+    <h2><span class="n">01</span> Гипотеза</h2><div class="box"><span class="editable" contenteditable="true">Если показать держателям карты с остатком промо «деньги работают каждый день», конверсия в открытие счёта вырастет, потому что снимается барьер «деньги просто лежат».</span></div>
+    <h2><span class="n">02</span> Варианты</h2><ul><li><b>Control:</b> текущий экран без промо</li><li><b>Variant:</b> карточка промо с акцентом на гибкое снятие</li></ul>
+    <h2><span class="n">03</span> Метрики</h2><div class="tbl"><table><tr><th>Тип</th><th>Метрика</th></tr><tr><td>Primary</td><td>% открывших счёт за 14 дней</td></tr><tr><td>Secondary</td><td>Средний первый пополнения</td></tr><tr><td>Guardrail</td><td>Удержание, жалобы в поддержку</td></tr></table></div>
+    <h2><span class="n">04</span> Мощность</h2><ul><li>Базовая конверсия ~8%, MDE +1,5 п.п.</li><li>≈ 11 000 на вариант, α=0,05, power=0,8</li><li>Длительность: ~2 недели при текущем трафике</li></ul>
+    <div class="box"><b>Стоп-условие:</b> срабатывание guardrail (рост жалоб/падение удержания) — останавливаем досрочно.</div>`;},
+  cohort(b){return`<p>Когортный анализ: <b>${esc(b||'удержание открывших накопительный счёт')}</b>. Доля активных по неделям после открытия.</p>
+    <div class="tbl"><table><tr><th>Когорта</th><th>W0</th><th>W1</th><th>W2</th><th>W4</th></tr>
+    <tr><td class="strong">Апрель</td><td>100%</td><td>82%</td><td>74%</td><td>68%</td></tr>
+    <tr><td class="strong">Май</td><td>100%</td><td>85%</td><td>78%</td><td>72%</td></tr>
+    <tr><td class="strong">Июнь (промо)</td><td>100%</td><td>88%</td><td>83%</td><td>—</td></tr></table></div>
+    <h2><span class="n">01</span> Интерпретация</h2><ul><li>Июньская когорта (с промо про гибкость) держится лучше — барьер «деньги заперты» снят</li><li>Основной отвал — W0→W1; усилить онбординг первого пополнения</li></ul>
+    <div class="box"><b>Действие:</b> подтянуть W0→W1 через round-up по умолчанию — он создаёт привычку пополнять.</div>`;},
+  funnel(b){return`<p>Воронка: <b>${esc(b||'открытие накопительного счёта')}</b>.</p>
+    <div class="tbl"><table><tr><th>Шаг</th><th>Пользователей</th><th>Конверсия</th></tr>
+    <tr><td class="strong">Увидел промо</td><td>100 000</td><td>—</td></tr>
+    <tr><td class="strong">Открыл экран</td><td>32 000</td><td>32%</td></tr>
+    <tr><td class="strong">Начал оформление</td><td>18 500</td><td>58%</td></tr>
+    <tr><td class="strong">Открыл счёт</td><td>11 200</td><td>61%</td></tr>
+    <tr><td class="strong">Пополнил</td><td>7 800</td><td>70%</td></tr></table></div>
+    <h2><span class="n">01</span> Узкие места</h2><ul><li><span class="pill p-hi">−68%</span>Промо → экран: слабый оффер или плейсмент</li><li><span class="pill p-mid">−42%</span>Экран → оформление: много полей / трение</li></ul>
+    <div class="box"><b>Приоритет:</b> сначала шаг «промо → экран» — там теряем больше всего; тест оффера про гибкое снятие.</div>`;},
+  codereview(b){return`<p>Ревью PR: <b>${esc(b||'экран накопительного счёта')}</b>. Замечания по важности.</p>
+    <div class="codeblock"><span class="c">// SavingsBalance.tsx — расчёт начисленных процентов</span>\n<span class="k">function</span> <span class="f">accruedInterest</span>(balance, rateAnnual) {\n  <span class="k">return</span> balance * rateAnnual / 365;   <span class="c">// ⚠ округление и валюта?</span>\n}</div>
+    <h2><span class="n">01</span> Замечания</h2><ul>
+    <li><span class="pill p-hi">блокер</span>Деньги в float — потеря копеек при начислении. Хранить в минорных единицах (центах), считать в целых.</li>
+    <li><span class="pill p-mid">важно</span>Захардкожен 365 — не учитывает високосный год; вынести в конфиг расчётной базы.</li>
+    <li><span class="pill p-mid">важно</span>Нет обработки состояния загрузки/ошибки баланса — добавить skeleton и retry.</li>
+    <li><span class="pill p-lo">мелочь</span>Магические числа в UI вынести в токены, дублируется форматирование валюты.</li></ul>
+    <h2><span class="n">02</span> Что хорошо</h2><ul><li>Компонент чистый, логика отделена от представления</li><li>Есть типы на пропсы</li></ul>
+    <div class="box"><b>Вердикт:</b> запросить изменения — блокер по деньгам в float обязателен до мёрджа.</div>`;},
+  techspec(b){return`<p>RFC: <b>${esc(b||'накопительный счёт при дебетовой карте')}</b>.</p>
+    <h2><span class="n">01</span> Контекст</h2><p>Держатели карты держат остаток без дохода. Нужен встроенный счёт с ежедневными процентами и мгновенным снятием.</p>
+    <h2><span class="n">02</span> Цели / не-цели</h2><ul><li><b>Цели:</b> открытие в 2 тапа, ежедневное начисление, снятие без задержек</li><li><b>Не-цели:</b> срочные вклады с блокировкой, инвестиционные продукты</li></ul>
+    <h2><span class="n">03</span> Дизайн</h2><ul><li>Сервис savings: счета, начисления, переводы карта↔счёт</li><li>Ежедневный джоб начисления (идемпотентный, по дню)</li><li>Хранение сумм в минорных единицах (int), без float</li></ul>
+    <h2><span class="n">04</span> Модель данных</h2><div class="tbl"><table><tr><th>Таблица</th><th>Ключевые поля</th></tr><tr><td class="strong">savings_account</td><td>id, user_id, currency, balance_minor, rate_bps, opened_at</td></tr><tr><td class="strong">interest_accrual</td><td>account_id, date, amount_minor (uniq: account+date)</td></tr></table></div>
+    <h2><span class="n">05</span> Риски и выкат</h2><ul><li>Точность начислений → тесты на округление, аудит-лог</li><li>Выкат под фичефлагом на 5% → 50% → 100%</li></ul>`;},
+  apispec(b){return`<p>API-контракт: <b>${esc(b||'накопительный счёт')}</b>. Черновик для бэкенда и мобайла.</p>
+    <div class="tbl"><table><tr><th>Метод</th><th>Путь</th><th>Назначение</th></tr>
+    <tr><td class="strong">POST</td><td>/v1/savings/accounts</td><td>Открыть счёт</td></tr>
+    <tr><td class="strong">GET</td><td>/v1/savings/accounts/{id}</td><td>Баланс и ставка</td></tr>
+    <tr><td class="strong">POST</td><td>/v1/savings/accounts/{id}/topup</td><td>Пополнить с карты</td></tr>
+    <tr><td class="strong">POST</td><td>/v1/savings/accounts/{id}/withdraw</td><td>Снять на карту</td></tr></table></div>
+    <h2><span class="n">01</span> Пример ответа</h2>
+    <div class="codeblock"><span class="c">// GET /v1/savings/accounts/{id}</span>\n{\n  <span class="s">"id"</span>: <span class="s">"sav_8f2a"</span>,\n  <span class="s">"currency"</span>: <span class="s">"EUR"</span>,\n  <span class="s">"balance_minor"</span>: 324018,        <span class="c">// €3 240,18</span>\n  <span class="s">"rate_bps"</span>: 450,               <span class="c">// 4,50%</span>\n  <span class="s">"interest_today_minor"</span>: 40,\n  <span class="s">"withdrawable"</span>: <span class="k">true</span>\n}</div>
+    <div class="box"><b>Договорённость:</b> все суммы — целые в минорных единицах + поле currency. Никаких float на стыке систем.</div>`;},
+  bug(b){return`<p>Разбор инцидента: <b>${esc(b||'двойное начисление процентов')}</b>.</p>
+    <h2><span class="n">01</span> Сводка и влияние</h2><ul><li>Часть счетов получила начисление дважды за один день</li><li>Затронуто ~1 200 счетов, переплата ~€90</li></ul>
+    <h2><span class="n">02</span> Таймлайн</h2><ul><li>02:14 — джоб начисления перезапущен после таймаута</li><li>02:15 — повторная вставка без проверки идемпотентности</li><li>09:40 — замечено по алерту на сумму начислений</li></ul>
+    <h2><span class="n">03</span> Корневая причина</h2><p>Нет уникального ограничения (account_id, date) в interest_accrual; ретрай джоба создал дубликаты.</p>
+    <h2><span class="n">04</span> Фикс и профилактика</h2><ul><li>Добавить uniq-индекс (account_id, date) + upsert</li><li>Сторно дублей, корректировка балансов</li><li>Алерт на аномалию суммы начислений в реальном времени</li></ul>
+    <div class="box"><b>Action items:</b> владелец — команда savings; срок — 2 дня; обязателен постмортем без обвинений.</div>`;},
+  tests(b){return`<p>Тест-кейсы: <b>${esc(b||'открытие и снятие со счёта')}</b>.</p>
+    <div class="tbl"><table><tr><th>ID</th><th>Сценарий</th><th>Ожидаемо</th></tr>
+    <tr><td class="strong">T-01</td><td>Открытие счёта в 2 тапа</td><td>Счёт создан, баланс 0, ставка показана</td></tr>
+    <tr><td class="strong">T-02</td><td>Пополнение с карты</td><td>Баланс вырос, история отражает операцию</td></tr>
+    <tr><td class="strong">T-03</td><td>Снятие всей суммы</td><td>Деньги на карте мгновенно, счёт активен</td></tr>
+    <tr><td class="strong">T-04</td><td>Начисление за день</td><td>Проценты добавлены один раз, без дублей</td></tr>
+    <tr><td class="strong">T-05</td><td>Снятие при нулевом балансе</td><td>Понятная ошибка, без падения</td></tr>
+    <tr><td class="strong">T-06</td><td>Округление при начислении</td><td>Нет потери/появления копеек (минорные единицы)</td></tr></table></div>
+    <div class="box"><b>Критично:</b> T-04 и T-06 — про деньги; должны быть в регрессе и в CI.</div>`;},
+};
+
+/* ===== PROTO ===== */
+function protoMobile(b){const title=b&&b.length<24?b:'Накопительный счёт';return`<div class="pv-phone"><div class="pv-screen">
+    <div class="pvm-status"><span>9:41</span><span>📶 🔋</span></div>
+    <div class="pvm-head"><div class="pvm-hi">Накопления<b>${esc(title)}</b></div><div class="pvm-pic">АР</div></div>
+    <div class="pvm-bal"><div class="l">На счёте · 4,5% годовых</div><div class="v">€3 240,18</div><div class="row"><span class="chg">↑ +€0,40 сегодня</span><span class="card4">с карты •• 4821</span></div></div>
+    <div class="pvm-acts"><div class="pvm-act"><div class="c pri">＋</div><span>Пополнить</span></div><div class="pvm-act"><div class="c">↓</div><span>Снять</span></div><div class="pvm-act"><div class="c">⚙️</div><span>Round-up</span></div><div class="pvm-act"><div class="c">🎯</div><span>Цель</span></div></div>
+    <div class="pvm-sheet"><div class="pvm-sec">Начисления <span>Всё</span></div>
+      <div class="pvm-tx"><div class="ic">📈</div><div class="t"><div class="n">Проценты за сегодня</div><div class="s">Ежедневно</div></div><div class="a plus">+€0,40</div></div>
+      <div class="pvm-tx"><div class="ic">🔄</div><div class="t"><div class="n">Round-up с покупок</div><div class="s">3 операции</div></div><div class="a plus">+€2,15</div></div>
+      <div class="pvm-tx"><div class="ic">💳</div><div class="t"><div class="n">Пополнение с карты</div><div class="s">Вчера</div></div><div class="a plus">+€200,00</div></div>
+      <div class="pvm-tabs"><div class="pvm-tab"><span class="ic">🏠</span>Главная</div><div class="pvm-tab"><span class="ic">💳</span>Карта</div><div class="pvm-tab on"><span class="ic">🐷</span>Накопл.</div><div class="pvm-tab"><span class="ic">📈</span>Инвест</div><div class="pvm-tab"><span class="ic">⋯</span>Ещё</div></div>
+    </div></div></div>`;}
+function protoWeb(b){return`<div class="pvc"><div class="pvc-card">
+    <div class="pvc-top"><h4>${esc(b&&b.length<26?b:'Настройки накоплений')}</h4><span class="c4">•• 4821</span></div>
+    <div class="pvc-row"><div><div class="pvc-rl">Ежедневное начисление</div><div class="pvc-rs">4,5% годовых</div></div><div class="pvc-toggle"></div></div>
+    <div class="pvc-row"><div><div class="pvc-rl">Round-up с покупок</div><div class="pvc-rs">Округляем и копим сдачу</div></div><div class="pvc-toggle"></div></div>
+    <div class="pvc-row"><div><div class="pvc-rl">Авто-снятие при нехватке</div><div class="pvc-rs">Покрывать платежи с карты</div></div><div class="pvc-toggle off"></div></div>
+    <div class="pvc-row"><div><div class="pvc-rl">Цель накопления</div><div class="pvc-rs">€3 240 из €5 000</div></div><div class="pvc-bar"><i style="width:65%"></i></div></div>
+  </div></div>`;}
+function protoLanding(b){const seg=b||'держателей карты с остатком';return`<div class="pv-browser"><div class="pv-bar"><div class="pv-dots"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i></div><div class="pv-url">revolut.com/savings</div></div>
+  <div class="pvw-nav"><div class="pvw-logo">Revolut</div><div class="pvw-links"><span>Карта</span><span>Накопления</span><span>Обмен</span><span>Бизнес</span></div><div class="pvw-btn">Открыть счёт</div></div>
+  <div class="pvw-hero"><div class="pvw-badge">Новое · в вашей карте</div><h1>Деньги на карте, которые работают каждый день</h1><p>Для ${esc(seg)}: проценты начисляются ежедневно, снять можно в любой момент — без блокировок.</p><div class="pvw-cta"><div class="b1">Открыть счёт</div><div class="b2">Как это работает</div></div></div>
+  <div class="pvw-feat"><div class="pvw-fcard"><div class="pvw-fico">📈</div><h4>Ежедневные проценты</h4><p>Начисление каждый день прямо в приложении.</p></div><div class="pvw-fcard"><div class="pvw-fico">🔓</div><h4>Без блокировок</h4><p>Снимайте когда нужно, без потери процентов.</p></div><div class="pvw-fcard"><div class="pvw-fico">🔄</div><h4>Копит за вас</h4><p>Round-up откладывает сдачу с каждой покупки.</p></div></div>
+  <div class="pvw-strip"><div class="pvw-stat"><div class="v">до 4,5%</div><div class="l">годовых</div></div><div class="pvw-stat"><div class="v">€0</div><div class="l">за открытие</div></div><div class="pvw-stat"><div class="v">1 мин</div><div class="l">до запуска</div></div></div></div>`;}
+function protoVisual(b){const tg=b||'Накопления';
+  const card=(bg,fg,accent,label,grad)=>`<svg width="240" height="300" viewBox="0 0 240 300" xmlns="http://www.w3.org/2000/svg" style="border-radius:16px;box-shadow:0 10px 28px rgba(20,16,40,.16)">
+    <defs><linearGradient id="g${label}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${grad[0]}"/><stop offset="1" stop-color="${grad[1]}"/></linearGradient></defs>
+    <rect width="240" height="300" fill="${bg}"/><circle cx="200" cy="60" r="80" fill="url(#g${label})" opacity="0.9"/><circle cx="36" cy="250" r="56" fill="${accent}" opacity="0.18"/>
+    <text x="24" y="48" font-family="Plus Jakarta Sans,sans-serif" font-size="15" font-weight="700" fill="${fg}">Revolut</text>
+    <text x="24" y="150" font-family="Plus Jakarta Sans,sans-serif" font-size="26" font-weight="700" fill="${fg}">${esc(tg).slice(0,14)}</text>
+    <text x="24" y="180" font-family="Inter,sans-serif" font-size="13" fill="${fg}" opacity="0.72">Деньги работают</text>
+    <text x="24" y="198" font-family="Inter,sans-serif" font-size="13" fill="${fg}" opacity="0.72">каждый день</text>
+    <rect x="24" y="232" width="128" height="34" rx="10" fill="${accent}"/><text x="88" y="254" text-anchor="middle" font-family="Inter,sans-serif" font-size="12" font-weight="700" fill="#fff">Открыть счёт</text>
+    <text x="24" y="288" font-family="JetBrains Mono,monospace" font-size="9" fill="${fg}" opacity="0.45">${esc(label)}</text></svg>`;
+  return`<div class="pv-visual">${card('#0b0b16','#fff','#FF631F','DARK',['#5b3a7a','#2b2350'])}${card('#EDEAF4','#171410','#FF631F','LIGHT',['#FF8A4C','#FF631F'])}</div>`;}
+const PROTO={mobile:protoMobile,web:protoWeb,landing:protoLanding,visual:protoVisual};
+
+/* free chat */
+function freeReply(text){const t=text.toLowerCase();let route=null;
+  if(/конкурент|monzo|n26|wise|nubank|сравни/.test(t))route='comp';
+  else if(/интервью|синтез|заметк/.test(t))route='synth';
+  else if(/gtm|запуск|вывод/.test(t))route='gtm';
+  else if(/jtbd|job|боль/.test(t))route='jtbd';
+  else if(/лендинг|landing|страниц/.test(t))route='landing';
+  else if(/мобил|приложен|экран|компонент/.test(t))route='mobile';
+  else if(/desk|рынок|кабинет/.test(t))route='desk';
+  else if(/визуал|баннер|график/.test(t))route='visual';
+  else if(/гипотез/.test(t))route='hyp';
+  else if(/стратег|primary|удержан|накоп/.test(t))route='strategy';
+  const intro=`<p>Смотрю в контексте продукта <strong>${esc(P().name)}</strong>${state.activeProject?` и проекта «${esc(getProj(state.activeProject).name)}»`:''}.</p>`;
+  const body=`<p>Как бы я подошёл:</p><ul><li>Зафиксировать сегмент держателей карты с остатком</li><li>Опереться на гибкость снятия — это наш дифференциатор</li><li>Главная цель — превратить карту в primary через накопления</li></ul><p>Могу развернуть или оформить структурным артефактом через задачу.</p>`;
+  let suggest='';if(route){const s=SKILLS[route];suggest=`<button class="suggest-task" onclick="armAndPrefill('${route}','${esc(text).replace(/'/g,'’')}')"><span>${s.ico}</span> Оформить задачей «${s.name}»</button>`;}
+  return intro+body+suggest;}
+
+/* ===== ENGINE ===== */
+function uid(){return Math.random().toString(36).slice(2,9);}
+let curView='dashboard';
+function getProj(id){return state.projects.find(p=>p.id===id);}
+
+function goView(v,arg){
+  curView=v;
+  document.querySelectorAll('.view').forEach(x=>{x.classList.remove('active'); if(x.id==='view-chat')x.style.display='none';});
+  const el=document.getElementById('view-'+v); el.classList.add('active'); if(v==='chat')el.style.display='flex';
+  ['dashboard','artifacts','tasks'].forEach(n=>{const b=document.getElementById('nav-'+n);if(b)b.classList.toggle('active',n===v);});
+  if(v==='dashboard'){document.getElementById('tbTitle').textContent='Дашборд';renderDash();}
+  if(v==='artifacts'){document.getElementById('tbTitle').textContent='Артефакты команды';renderArtifacts();}
+  if(v==='tasks'){document.getElementById('tbTitle').textContent='Задачи';renderTasks();}
+  if(v==='project'){renderProject(arg);}
+  if(v==='chat'){renderThread();updateChatHeader();}
+  renderProjList();renderChats();toggleSb(false);
+}
+
+/* dashboard */
+function renderDash(){
+  const host=document.getElementById('dashHost');
+  const feed=state.artifacts.slice(0,5);
+  host.innerHTML=`
+    <div class="hero"><div class="online"><span class="av"><span style="background:#FF631F">АР</span><span style="background:#2d6cdf">ЛК</span><span style="background:#0d8a8a">ИП</span><span style="background:#b0299a">МД</span></span> 4 в сети</div>
+      <div class="hero-eyebrow">Среда · команда Revolut</div><h1>С возвращением, Арман</h1><p>Команда уже в работе. Откройте проект, запустите задачу или продолжите в чате — контекст продукта подгружен.</p></div>
+    <div class="block-label">Активные проекты <span class="all" onclick="openNewProject()">+ Новый проект</span></div>
+    <div class="proj-grid">${state.projects.map(projCard).join('')}</div>
+    <div class="block-label">Быстрый старт <span class="all" onclick="openGallery()">Все задачи →</span></div>
+    <div class="quick-grid">${HERO_SUGGEST.map(id=>{const s=SKILLS[id];return`<button class="quick" onclick="arm('${id}')"><div class="quick-ico">${s.ico}</div><div style="flex:1"><div class="quick-title">${s.name}</div><div class="quick-desc">${s.desc}</div></div><div class="quick-go">→</div></button>`;}).join('')}</div>
+    <div class="block-label">Лента команды <span class="all" onclick="goView('artifacts')">Все артефакты →</span></div>
+    <div class="feed">${feed.map(feedItem).join('')}</div>
+    <div class="ctx-card"><button class="ctx-edit" onclick="openProfile()">Редактировать</button><div class="ctx-l">Профиль продукта · используется во всех задачах</div><div class="ctx-n">${esc(P().name)}</div><div class="ctx-d">${esc(P().desc)}</div><div class="ctx-tags"><span class="ctx-tag">Финтех</span><span class="ctx-tag">${esc(P().stage)}</span><span class="ctx-tag">EU + UK</span></div></div>`;
+}
+function projCard(p){
+  const stCls=p.status==='active'?'ps-active':p.status==='planning'?'ps-planning':'ps-done';
+  const stTxt=p.status==='active'?'активный':p.status==='planning'?'планирование':'завершён';
+  const dot=p.status==='active'?'var(--green)':p.status==='planning'?'var(--neutral)':'var(--ink-3)';
+  return`<button class="pcard" onclick="goView('project','${p.id}')">
+    <div class="pcard-top"><span class="pcard-status ${stCls}"><span class="proj-dot" style="background:${dot}"></span>${stTxt}</span><span class="pcard-product">${esc(p.product)}</span></div>
+    <h3>${esc(p.name)}</h3><p>${esc(p.goal)}</p>
+    <div class="pbar"><i style="width:${p.progress}%"></i></div>
+    <div class="pcard-foot"><span class="prog">${p.progress}% · ${p.chatIds.length} задач</span><span class="avastack">${p.members.map(m=>`<span style="background:${TEAM[m]||'#888'}">${m}</span>`).join('')}</span></div></button>`;
+}
+function feedItem(a){const s=SKILLS[a.skill];const pj=a.projectId?getProj(a.projectId):null;
+  return`<div class="feed-item" onclick="openChat('${a.chatId}')"><div class="feed-ico">${s.ico}</div><div class="feed-main"><div class="feed-title">${esc(a.title)}</div><div class="feed-meta"><b>${esc(a.author)}</b> · ${s.name}</div></div>${pj?`<span class="feed-proj">${esc(pj.name)}</span>`:''}<span class="status-pill ${a.status==='done'?'st-done':'st-draft'}">${a.status==='done'?'готов':'в работе'}</span><div class="feed-time">${esc(a.when)}</div></div>`;}
+
+/* project view */
+function renderProject(id){
+  const p=getProj(id); if(!p){goView('dashboard');return;}
+  state.activeProject=id;
+  document.getElementById('tbTitle').innerHTML=`<span class="dim">Проекты</span><span class="sep">/</span>${esc(p.name)}`;
+  const chats=p.chatIds.map(cid=>state.chats.find(c=>c.id===cid)).filter(Boolean);
+  const arts=state.artifacts.filter(a=>a.projectId===id);
+  const stTxt=p.status==='active'?'активный':p.status==='planning'?'планирование':'завершён';
+  const dot=p.status==='active'?'var(--green)':p.status==='planning'?'var(--neutral)':'var(--ink-3)';
+  const host=document.getElementById('projHost');
+  host.innerHTML=`
+    <div class="proj-hero">
+      <div class="proj-actions"><button class="btn btn-gho btn-sm" onclick="openProfileProject('${id}')">Контекст</button><button class="btn btn-pri btn-sm" onclick="newChatInProject('${id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 5v14M5 12h14"/></svg> Новый чат в проекте</button></div>
+      <a class="proj-back" onclick="goView('dashboard')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg> Все проекты</a>
+      <div class="proj-hero-top"><h1>${esc(p.name)}</h1></div>
+      <div class="goal">${esc(p.goal)}</div>
+      <div class="proj-meta-row">
+        <div class="pm-block"><div class="l">Статус</div><div class="v"><span class="proj-dot" style="background:${dot}"></span>${stTxt}</div></div>
+        <div class="pm-block"><div class="l">Продукт</div><div class="v">${esc(p.product)}</div></div>
+        <div class="pm-block"><div class="l">Команда</div><div class="v"><span class="avastack">${p.members.map(m=>`<span style="background:${TEAM[m]||'#888'}">${m}</span>`).join('')}</span></div></div>
+        <div class="pm-block proj-prog"><div class="l">Прогресс · ${p.progress}%</div><div class="pbar"><i style="width:${p.progress}%"></i></div></div>
+      </div>
+    </div>
+    <div class="block-label">Чаты и задачи проекта · ${chats.length}</div>
+    <div class="feed">${chats.length?chats.map(c=>{const last=c.messages.filter(m=>m.type==='artifact').slice(-1)[0];const ico=c.ico||'💬';const sub=last?SKILLS[last.skill].name:'свободный чат';
+      return`<div class="feed-item" onclick="openChat('${c.id}')"><div class="feed-ico">${ico}</div><div class="feed-main"><div class="feed-title">${esc(c.title||'Новый чат')}</div><div class="feed-meta">${sub} · ${esc(c.when||'')}</div></div><div class="feed-time">→</div></div>`;}).join('')
+      :`<div style="padding:24px;text-align:center;color:var(--ink-3);font-size:13px;border:1px dashed var(--line-md);border-radius:12px">Пока нет чатов в проекте. Нажмите «Новый чат в проекте».</div>`}</div>
+    <div class="block-label">Артефакты проекта · ${arts.length}</div>
+    <div class="hist"><div class="hist-row head"><div>Артефакт</div><div>Автор</div><div style="grid-column:span 1">Тип</div><div>Когда</div><div>Статус</div></div>
+      ${arts.map(a=>{const s=SKILLS[a.skill];return`<div class="hist-row" onclick="openChat('${a.chatId}')"><div class="hist-name"><div class="hi">${s.ico}</div><div style="min-width:0"><div class="hist-name-t">${esc(a.title)}</div><div class="hist-name-s">${s.name}</div></div></div><div class="hist-author"><span class="mini-ava" style="background:${TEAM[a.initials]||'#888'}">${a.initials}</span>${esc(a.author)}</div><div class="hist-proj">${s.kind==='doc'?'документ':'превью'}</div><div class="hist-date">${esc(a.when)}</div><div><span class="status-pill ${a.status==='done'?'st-done':'st-draft'}">${a.status==='done'?'готов':'в работе'}</span></div></div>`;}).join('')}
+    </div>`;
+}
+
+/* artifacts view */
+function renderArtifacts(){
+  const host=document.getElementById('artHost');
+  const filter=state.artFilter;
+  const list=filter==='all'?state.artifacts:state.artifacts.filter(a=>a.projectId===filter);
+  const chips=[`<button class="av-f ${filter==='all'?'on':''}" onclick="setArtFilter('all')">Все</button>`].concat(state.projects.map(p=>`<button class="av-f ${filter===p.id?'on':''}" onclick="setArtFilter('${p.id}')">${esc(p.name)}</button>`)).join('');
+  host.innerHTML=`<div class="av-head"><div class="eb">Командное пространство</div><h1>Артефакты команды</h1><p>Все результаты — в одном месте, с автором, проектом и историей. Коллеги используют чужие артефакты как контекст.</p></div>
+    <div class="av-filters">${chips}</div>
+    <div class="hist"><div class="hist-row head"><div>Артефакт</div><div>Автор</div><div>Проект</div><div>Когда</div><div>Статус</div></div>
+    ${list.map(a=>{const s=SKILLS[a.skill];const pj=a.projectId?getProj(a.projectId):null;return`<div class="hist-row" onclick="openChat('${a.chatId}')"><div class="hist-name"><div class="hi">${s.ico}</div><div style="min-width:0"><div class="hist-name-t">${esc(a.title)}</div><div class="hist-name-s">${s.name}</div></div></div><div class="hist-author"><span class="mini-ava" style="background:${TEAM[a.initials]||'#888'}">${a.initials}</span>${esc(a.author)}</div><div class="hist-proj">${pj?esc(pj.name):'<span style="color:var(--ink-3)">—</span>'}</div><div class="hist-date">${esc(a.when)}</div><div><span class="status-pill ${a.status==='done'?'st-done':'st-draft'}">${a.status==='done'?'готов':'в работе'}</span></div></div>`;}).join('')}</div>`;
+}
+function setArtFilter(f){state.artFilter=f;renderArtifacts();}
+
+/* chat */
+function renderEmpty(){
+  const inProj=state.activeProject?getProj(state.activeProject):null;
+  document.getElementById('threadHost').innerHTML=`<div class="empty-state">
+    <div class="es-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+    <div class="es-title">Чем займёмся, Арман?</div>
+    <div class="es-sub">${inProj?`Чат привязан к проекту «${esc(inProj.name)}». ` :''}Спросите что угодно или запустите задачу. Контекст продукта загружен.</div>
+    <div class="es-suggest">Быстрый старт</div>
+    <div class="sg-grid">${HERO_SUGGEST.map(id=>{const s=SKILLS[id];return`<button class="sg" onclick="arm('${id}')"><div class="sg-ico">${s.ico}</div><div><div class="sg-t">${s.name}</div><div class="sg-d">${s.desc}</div></div></button>`;}).join('')}</div>
+    <button class="es-all" onclick="openGallery()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg> Открыть все задачи (${Object.keys(SKILLS).length})</button></div>`;
+}
+function updateChatHeader(){
+  const c=state.current;
+  const pj=c&&c.projectId?getProj(c.projectId):(state.activeProject?getProj(state.activeProject):null);
+  document.getElementById('projBanner').innerHTML = pj?`<div class="proj-banner"><button class="pb" onclick="goView('project','${pj.id}')"><span class="dot" style="background:${pj.status==='active'?'var(--green)':'var(--neutral)'}"></span> Проект: <b style="font-weight:600">${esc(pj.name)}</b> · ${esc(pj.product)}</button></div>`:'';
+  document.getElementById('tbTitle').textContent = c?(c.title||'Новый чат'):'Новый чат';
+}
+function renderThread(){const c=state.current;if(!c||!c.messages.length){renderEmpty();updateChatHeader();return;}
+  document.getElementById('threadHost').innerHTML=`<div class="thread">${c.messages.map(renderMsg).join('')}</div>`;updateChatHeader();scrollBottom();}
+function aiAva(){return`<div class="msg-ava ai"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 6v6c0 5 3.5 8 8 10 4.5-2 8-5 8-10V6l-8-4Z"/></svg></div>`;}
+function renderMsg(m){
+  if(m.role==='user'){const by=m.by||'АР';const col=TEAM[by]||'#FF631F';const tag=m.skill?`<div class="task-tag">${SKILLS[m.skill].ico} ${SKILLS[m.skill].name}</div>`:'';return`<div class="msg user"><div class="msg-body">${tag}<div class="bubble">${esc(m.text)}</div></div><div class="msg-ava me" style="background:${col}">${by}</div></div>`;}
+  if(m.role==='thinking')return`<div class="msg">${aiAva()}<div class="msg-body"><div class="typing"><span></span><span></span><span></span></div></div></div>`;
+  let inner=m.type==='artifact'?renderArtifact(m):`<div class="ai-text">${m.html}</div>`;
+  return`<div class="msg">${aiAva()}<div class="msg-body">${inner}</div></div>`;}
+function renderArtifact(m){const s=SKILLS[m.skill];const isProto=s.kind!=='doc';
+  return`<div class="art"><div class="art-head"><div class="art-ico">${s.ico}</div><div class="art-h-meta"><div class="art-h-title">${esc(m.title)}</div><div class="art-h-sub">${s.name} · ${isProto?'превью':'документ'}${m.author?' · '+esc(m.author):''}</div></div><div class="art-h-actions">
+    ${isProto?`<button class="icon-btn" title="Развернуть" onclick="expandArt('${m.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3M3 16v3a2 2 0 0 0 2 2h3m13-5v3a2 2 0 0 1-2 2h-3"/></svg></button>`:`<button class="icon-btn" title="Доработать" onclick="toggleEdit('${m.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></button>`}
+    <button class="icon-btn" title="Копировать" onclick="toast('Скопировано ✓')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></button></div></div>
+    <div class="art-content scrollbar ${s.kind==='doc'?'doc':''}" id="ac-${m.id}">${m.body}</div>
+    <div class="art-foot"><button class="btn btn-gho btn-sm" onclick="toast('Экспортировано ✓')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5M12 15V3"/></svg> Экспорт</button><button class="btn btn-gho btn-sm" onclick="toast('Сохранено в библиотеку команды ✓')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg> Сохранить</button>${isProto?`<button class="btn btn-pri btn-sm" onclick="expandArt('${m.id}')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg> Открыть превью</button>`:''}</div></div>`;}
+
+function send(){
+  const inp=document.getElementById('input');const text=inp.value.trim();const skill=state.armed;
+  if(!text&&!skill)return;
+  const userText=text||`Запусти задачу «${SKILLS[skill].name}»`;
+  if(!state.current){const pid=state.activeProject;state.current={id:uid(),title:'',messages:[],when:'сейчас',ico:skill?SKILLS[skill].ico:'💬',projectId:pid};state.chats.unshift(state.current);if(pid){const p=getProj(pid);if(p)p.chatIds.unshift(state.current.id);}}
+  const c=state.current;
+  if(!c.title){c.title=text?text.slice(0,42):SKILLS[skill].name;if(skill)c.ico=SKILLS[skill].ico;}
+  c.messages.push({role:'user',text:userText,skill:skill});
+  inp.value='';autoGrow(inp);toggleSend();const used=skill;disarm();
+  renderThread();renderChats();renderProjList();
+  c.messages.push({role:'thinking'});renderThread();
+  setTimeout(()=>{c.messages.pop();
+    if(used){const s=SKILLS[used];const brief=text;const body=s.kind==='doc'?`<div class="doc">${DOC[used](brief)}</div>`:PROTO[s.kind](brief);const m={role:'assistant',type:'artifact',skill:used,title:deriveTitle(used,brief),body,id:uid(),author:'Арман'};c.messages.push(m);
+      state.artifacts.unshift({skill:used,title:m.title,author:'Арман',initials:'АР',when:'только что',status:'done',chatId:c.id,projectId:c.projectId});}
+    else{c.messages.push({role:'assistant',type:'text',html:freeReply(text)});}
+    renderThread();},used?950:750);
+}
+function deriveTitle(skill,brief){const s=SKILLS[skill];if(brief&&brief.length<48&&s.kind==='doc')return s.name+': '+brief;
+  switch(skill){case 'comp':return 'Конкурентный анализ: '+(brief||comps()[0]||'Monzo');case 'mobile':return 'Мобильный прототип: '+(brief||'накопительный счёт');case 'web':return 'Веб-компонент: '+(brief||'настройки накоплений');case 'landing':return 'Лендинг: '+(brief||'Накопления');case 'visual':return 'Визуал: '+(brief||'Накопления');default:return s.name;}}
+
+function arm(id){state.armed=id;state.recentTasks=[id,...(state.recentTasks||[]).filter(x=>x!==id)].slice(0,6);const s=SKILLS[id];document.getElementById('armed').classList.add('show');document.getElementById('armedName').textContent=s.name;document.getElementById('armedIco').textContent=s.ico;closeOverlay();goView('chat');const inp=document.getElementById('input');inp.placeholder=s.kind!=='doc'?'Опишите, что прототипировать (или просто отправьте)…':'Добавьте детали для задачи (или просто отправьте)…';inp.focus();toggleSend();}
+function armAndPrefill(id,text){arm(id);const inp=document.getElementById('input');inp.value=text;autoGrow(inp);toggleSend();inp.focus();}
+function disarm(){state.armed=null;document.getElementById('armed').classList.remove('show');document.getElementById('input').placeholder='Спросите что угодно или выберите задачу…';toggleSend();}
+
+let editing={};
+function toggleEdit(id){const el=document.getElementById('ac-'+id);editing[id]=!editing[id];el.classList.toggle('edit-on',editing[id]);toast(editing[id]?'Режим доработки':'Изменения сохранены');if(editing[id]){const f=el.querySelector('.editable');if(f)f.focus();}}
+function expandArt(id){const m=state.current.messages.find(x=>x.id===id);if(!m)return;const s=SKILLS[m.skill];openOverlayHtml(`<div class="expand"><div class="expand-head"><div class="art-ico">${s.ico}</div><div style="flex:1"><div class="art-h-title">${esc(m.title)}</div><div class="art-h-sub">${s.name} · превью</div></div><button class="sheet-close" style="position:static" onclick="closeOverlay()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></button></div><div class="expand-body">${m.body}</div></div>`);}
+
+/* sidebar */
+function renderProjList(){
+  const el=document.getElementById('projList');
+  el.innerHTML=state.projects.map(p=>{const dot=p.status==='active'?'var(--green)':p.status==='planning'?'var(--neutral)':'var(--ink-3)';
+    return`<button class="proj-item ${curView==='project'&&state.activeProject===p.id?'active':''}" onclick="goView('project','${p.id}')"><span class="proj-dot" style="background:${dot}"></span><span class="pt">${esc(p.name)}</span><span class="pn">${p.chatIds.length}</span></button>`;}).join('');
+}
+function renderChats(){const list=document.getElementById('chatList');const recent=state.chats.slice(0,8);
+  if(!recent.length){list.innerHTML=`<div style="padding:10px 13px;font-size:12.5px;color:var(--ink-3)">Пока нет диалогов.</div>`;return;}
+  list.innerHTML=recent.map(c=>`<button class="chat-item ${state.current&&c.id===state.current.id&&curView==='chat'?'active':''}" onclick="openChat('${c.id}')"><span class="ci-ico">${c.ico||'💬'}</span><span class="ci-t">${esc(c.title||'Новый чат')}</span></button>`).join('');}
+function openChat(id){state.current=state.chats.find(c=>c.id===id);state.activeProject=state.current.projectId||null;goView('chat');renderThread();}
+function newChat(){state.current=null;state.activeProject=null;disarm();goView('chat');renderEmpty();document.getElementById('compHint').textContent='Свободный чат и задачи работают вместе. Контекст продукта подставляется автоматически.';document.getElementById('input').focus();}
+function newChatInProject(pid){state.current=null;state.activeProject=pid;disarm();goView('chat');renderEmpty();const p=getProj(pid);document.getElementById('compHint').textContent=`Новый чат будет сохранён в проект «${p.name}».`;document.getElementById('input').focus();}
+
+/* tasks page */
+function openGallery(){goView('tasks');}
+function renderTasks(){
+  const host=document.getElementById('tasksHost');
+  host.innerHTML=`
+    <div class="av-head"><div class="eb">Библиотека задач</div><h1>Задачи</h1><p>Сценарии под продуктовую, маркетинговую, исследовательскую, аналитическую и инженерную работу. Контекст продукта подставляется сам — промт писать не нужно.</p></div>
+    <div class="tasks-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg><input id="taskSearch" placeholder="Поиск задачи — например «когортный» или «код-ревью»…" oninput="onTaskSearch(this.value)" value="${esc(state.taskQuery)}"></div>
+    <div id="taskResults"></div>`;
+  renderTaskResults();
+  if(state.taskQuery){const i=document.getElementById('taskSearch');i.focus();i.setSelectionRange(i.value.length,i.value.length);}
+}
+function onTaskSearch(v){state.taskQuery=v;renderTaskResults();}
+function setTaskCat(c){state.taskCat=c;renderTaskResults();}
+function taskCard(e){const[id,s]=e;const c=CATS.find(x=>x.id===s.cat);return`<button class="gal-skill" onclick="arm('${id}')"><div class="gal-ico">${s.ico}</div><div><div class="gal-t">${s.name}</div><div class="gal-d">${s.desc}</div><span class="gal-badge2">${esc(c?c.name:'')}</span>${s.kind!=='doc'?'<span class="gal-badge">живое превью</span>':''}</div></button>`;}
+function renderTaskResults(){
+  const q=state.taskQuery.toLowerCase().trim();const cat=state.taskCat;
+  const chips=[`<button class="av-f ${cat==='all'?'on':''}" onclick="setTaskCat('all')">Все</button>`].concat(CATS.map(c=>`<button class="av-f ${cat===c.id?'on':''}" onclick="setTaskCat('${c.id}')">${esc(c.name)}</button>`)).join('');
+  const all=Object.entries(SKILLS);
+  const match=e=>(cat==='all'||e[1].cat===cat)&&(!q||e[1].name.toLowerCase().includes(q)||e[1].desc.toLowerCase().includes(q));
+  let groups='';
+  for(const c of CATS){
+    if(cat!=='all'&&cat!==c.id)continue;
+    const items=all.filter(e=>e[1].cat===c.id&&match(e));
+    if(!items.length)continue;
+    groups+=`<div class="gal-cat">${c.name}<span class="ln"></span></div><div class="gal-grid">${items.map(taskCard).join('')}</div>`;
+  }
+  if(!groups)groups=`<div style="padding:42px;text-align:center;color:var(--ink-3);font-size:14px">Ничего не найдено по запросу «${esc(state.taskQuery)}». Попробуйте другое слово.</div>`;
+  const recent=(!q&&state.recentTasks.length)?`<div class="gal-cat">Недавние задачи<span class="ln"></span></div><div class="gal-grid">${state.recentTasks.filter(id=>SKILLS[id]).map(id=>taskCard([id,SKILLS[id]])).join('')}</div>`:'';
+  document.getElementById('taskResults').innerHTML=`<div class="av-filters" style="margin-top:4px">${chips}</div>${recent}${groups}`;
+}
+
+/* new project */
+function openNewProject(){openOverlayHtml(`<div class="mini"><h3>Новый проект</h3><p class="d">Проект собирает все чаты, задачи и артефакты по одной инициативе или продукту.</p>
+  <div class="field"><label>Название проекта</label><input class="inp" id="np_name" placeholder="Напр. Запуск кэшбэка 2.0"></div>
+  <div class="field"><label>Продукт / контекст</label><input class="inp" id="np_prod" value="Дебетовая карта"></div>
+  <div class="field"><label>Цель</label><textarea class="txa" id="np_goal" placeholder="Что хотим сделать и зачем"></textarea></div>
+  <div class="grid2"><div class="field"><label>Статус</label><select class="sel" id="np_status"><option value="active">Активный</option><option value="planning">Планирование</option></select></div></div>
+  <div class="mini-actions"><button class="btn btn-gho" onclick="closeOverlay()">Отмена</button><button class="btn btn-pri" onclick="createProject()">Создать проект</button></div></div>`);}
+function createProject(){const name=gv('np_name').trim()||'Новый проект';const p={id:uid(),name,product:gv('np_prod')||'Дебетовая карта',goal:gv('np_goal')||'Цель уточняется.',status:gv('np_status'),progress:5,members:['АР'],chatIds:[]};state.projects.unshift(p);closeOverlay();renderProjList();toast('Проект создан ✓');goView('project',p.id);}
+
+/* profile */
+function openProfile(){const p=P();openOverlayHtml(`<div class="mini"><h3>Профиль продукта</h3><p class="d">Описывается один раз — подставляется во все задачи и чат.</p>
+  <div class="grid2"><div class="field"><label>Название</label><input class="inp" id="f_name" value="${esc(p.name)}"></div><div class="field"><label>Стадия</label><input class="inp" id="f_stage" value="${esc(p.stage)}"></div></div>
+  <div class="field"><label>Что это</label><textarea class="txa" id="f_desc">${esc(p.desc)}</textarea></div>
+  <div class="field"><label>Аудитория</label><textarea class="txa" id="f_aud" style="min-height:54px">${esc(p.audience)}</textarea></div>
+  <div class="field"><label>Конкуренты</label><input class="inp" id="f_comp" value="${esc(p.comp)}"></div>
+  <div class="mini-actions"><button class="btn btn-gho" onclick="closeOverlay()">Отмена</button><button class="btn btn-pri" onclick="saveProfile()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M20 6 9 17l-5-5"/></svg> Сохранить</button></div></div>`);}
+function openProfileProject(id){openProfile();}
+function saveProfile(){state.profile={name:gv('f_name')||'Без названия',stage:gv('f_stage'),desc:gv('f_desc'),audience:gv('f_aud'),comp:gv('f_comp')};document.getElementById('prodName').textContent=P().name;document.getElementById('prodAva').textContent=P().name.charAt(0).toUpperCase();document.getElementById('tbProd').textContent=P().name;closeOverlay();toast('Профиль сохранён ✓');if(curView==='dashboard')renderDash();}
+
+/* util */
+function openOverlayHtml(h){const o=document.getElementById('overlay');o.innerHTML=h;o.classList.add('open');}
+function closeOverlay(){const o=document.getElementById('overlay');o.classList.remove('open');o.innerHTML='';}
+document.getElementById('overlay').addEventListener('click',e=>{if(e.target.id==='overlay')closeOverlay();});
+function autoGrow(el){el.style.height='auto';el.style.height=Math.min(el.scrollHeight,160)+'px';}
+function toggleSend(){const has=document.getElementById('input').value.trim().length>0||state.armed;document.getElementById('sendBtn').disabled=!has;}
+function onKey(e){if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();send();}}
+function scrollBottom(){const w=document.getElementById('threadWrap');requestAnimationFrame(()=>{w.scrollTop=w.scrollHeight;});}
+function toggleSb(open){const sb=document.getElementById('sb'),sc=document.getElementById('scrim');if(open){sb.classList.add('open');sc.classList.add('show');}else{sb.classList.remove('open');sc.classList.remove('show');}}
+function toast(msg){const w=document.getElementById('toasts');const el=document.createElement('div');el.className='toast';el.innerHTML=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>${esc(msg)}`;w.appendChild(el);setTimeout(()=>{el.style.transition='opacity .3s,transform .3s';el.style.opacity='0';el.style.transform='translateY(10px)';setTimeout(()=>el.remove(),300);},2300);}
+
+/* ===== SEED: проекты + чаты команды ===== */
+const PROJECTS_SEED=[
+  {id:'p_savings',name:'Запуск накопительного счёта',product:'Дебетовая карта',status:'active',progress:62,members:['АР','ЛК','ИП','МД','ДА','СД'],
+   goal:'Запустить накопительный счёт, встроенный в дебетовую карту: ежедневные проценты и снятие без блокировок. Цель — рост остатков на счёте и доли primary-аккаунтов.',
+   tasks:[
+     {skill:'gtm',brief:'запуск накопительного счёта при дебетовой карте',text:'GTM-план запуска накопительного счёта',author:'Арман',by:'АР',when:'сегодня, 10:12',status:'done'},
+     {skill:'sql',brief:'воронка открытия накопительного счёта держателями карты',text:'SQL: воронка открытия накопительного счёта',author:'Дима',by:'ДА',when:'сегодня, 09:30',status:'done'},
+     {skill:'codereview',brief:'экран накопительного счёта',text:'Ревью PR: экран накопительного счёта',author:'Костя',by:'СД',when:'вчера, 17:10',status:'done'},
+     {skill:'synth',brief:'12 интервью про накопления на карте',text:'Синтезируй 12 интервью про накопления',author:'Мария',by:'МД',when:'вчера, 14:05',status:'done'},
+     {skill:'mobile',brief:'накопительный счёт',text:'Прототип экрана накопительного счёта',author:'Игорь',by:'ИП',when:'вчера, 12:40',status:'done'},
+     {skill:'custdev',brief:'',text:'Гайд интервью: страх блокировки денег',author:'Лена',by:'ЛК',when:'2 дня назад',status:'draft'},
+     {skill:'landing',brief:'держателей карты с остатком',text:'Прототип лендинга накопительного счёта',author:'Арман',by:'АР',when:'3 дня назад',status:'done'},
+   ]},
+  {id:'p_cashback',name:'Кэшбэк 2.0 по дебетовой карте',product:'Дебетовая карта',status:'planning',progress:24,members:['АР','ИП','СД'],
+   goal:'Пересобрать программу кэшбэка по дебетовой карте: категории, лимиты и восприятие ценности — чтобы повысить частоту трат.',
+   tasks:[
+     {skill:'comp',brief:'Monzo',text:'Конкурентный анализ кэшбэка Monzo',author:'Игорь',by:'ИП',when:'вчера, 16:20',status:'done'},
+     {skill:'apispec',brief:'правила кэшбэка',text:'API-контракт для правил кэшбэка',author:'Костя',by:'СД',when:'2 дня назад',status:'draft'},
+     {skill:'hyp',brief:'программа кэшбэка по карте',text:'Гипотезы по кэшбэку 2.0',author:'Арман',by:'АР',when:'2 дня назад',status:'draft'},
+     {skill:'web',brief:'настройки кэшбэка',text:'Прототип управления кэшбэком',author:'Игорь',by:'ИП',when:'3 дня назад',status:'done'},
+   ]},
+];
+function buildSeed(){
+  PROJECTS_SEED.forEach(ps=>{
+    const proj={id:ps.id,name:ps.name,product:ps.product,status:ps.status,progress:ps.progress,members:ps.members,goal:ps.goal,chatIds:[]};
+    state.projects.push(proj);
+    ps.tasks.forEach(t=>{
+      const sk=SKILLS[t.skill];
+      const body=sk.kind==='doc'?`<div class="doc">${DOC[t.skill](t.brief)}</div>`:PROTO[sk.kind](t.brief);
+      const title=deriveTitle(t.skill,t.brief);
+      const chat={id:uid(),title,ico:sk.ico,when:t.when,projectId:proj.id,messages:[{role:'user',text:t.text,skill:t.skill,by:t.by},{role:'assistant',type:'artifact',skill:t.skill,title,body,id:uid(),author:t.author}]};
+      state.chats.push(chat);proj.chatIds.push(chat.id);
+      state.artifacts.push({skill:t.skill,title,author:t.author,initials:t.by,when:t.when,status:t.status,chatId:chat.id,projectId:proj.id});
+    });
+  });
+  // sort artifacts by recency-ish (keep seed order, savings first)
+}
+
+/* INIT */
+document.getElementById('taskCount').textContent=Object.keys(SKILLS).length;
+buildSeed();
+state.recentTasks=['gtm','sql','codereview','mobile','comp','synth'];
+renderProjList();renderChats();
+goView('dashboard');
+</script>
+</body>
+</html>

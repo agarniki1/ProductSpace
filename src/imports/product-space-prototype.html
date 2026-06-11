@@ -1,0 +1,2963 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Product Space</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --orange: #FF631F;
+      --orange-dk: #E5500F;
+      --orange-lt: #FFF1EB;
+      --orange-md: #FFD3C0;
+      --bg: #FFFFFF;
+      --bg-soft: #FAF8F4;
+      --bg-subtle: #F4F1EA;
+      --sidebar: #F3F0EA;
+      --ink: #171410;
+      --ink-2: #544F48;
+      --ink-3: #9B9486;
+      --border: rgba(20,16,12,.12);
+      --border-md: rgba(20,16,12,.18);
+      --green: #1A7A4A;
+      --green-lt: #E7F3EC;
+      --blue: #2D6CDF;
+      --blue-lt: #E8F0FF;
+
+      --ui: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --display: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --sidebar-width: 268px;
+    }
+
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      font-family: var(--ui);
+      background: var(--bg-soft);
+      color: var(--ink);
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    h1, h2, h3 {
+      font-family: var(--display);
+      letter-spacing: -0.02em;
+    }
+
+    button {
+      font-family: inherit;
+      border: none;
+      background: none;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    input, textarea {
+      font-family: inherit;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: var(--sidebar-width) 1fr;
+      height: 100vh;
+      background: var(--bg-soft);
+    }
+
+    /* SIDEBAR */
+
+    .sb {
+      background: var(--sidebar);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      z-index: 40;
+    }
+
+    .sb-top {
+      padding: 16px 14px 8px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 6px 12px;
+    }
+
+    .brand-mark {
+      width: 30px;
+      height: 30px;
+      border-radius: 10px;
+      background: radial-gradient(circle at 15% 10%, #FFE4D1 0, #FF8A4C 40%, #FF631F 100%);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 2px 10px rgba(255, 99, 31, .36);
+      flex-shrink: 0;
+    }
+
+    .brand-mark svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .brand-name {
+      font-family: var(--display);
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .brand-name span {
+      color: var(--orange);
+    }
+
+    .new-task {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: var(--orange);
+      color: #fff;
+      padding: 11px 14px;
+      border-radius: 11px;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: 0 2px 8px rgba(255, 99, 31, .3);
+      transition: transform .12s, box-shadow .15s, background .15s;
+      margin-top: 10px;
+    }
+
+    .new-task svg {
+      width: 16px;
+      height: 16px;
+      stroke-width: 2.4;
+    }
+
+    .new-task:hover {
+      background: var(--orange-dk);
+      box-shadow: 0 4px 14px rgba(255, 99, 31, .36);
+    }
+
+    .new-task:active {
+      transform: translateY(1px);
+    }
+
+    .sb-section-label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+      padding: 16px 16px 7px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .sb-section-label small {
+      font-size: 10px;
+      font-weight: 500;
+      color: var(--ink-3);
+    }
+
+    .sb-nav {
+      padding: 8px 10px 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .sb-link {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 9px 11px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: var(--ink-2);
+      width: 100%;
+      text-align: left;
+      transition: background .14s, color .14s;
+    }
+
+    .sb-link svg {
+      width: 17px;
+      height: 17px;
+      stroke-width: 1.9;
+      opacity: .7;
+    }
+
+    .sb-link:hover {
+      background: rgba(20,16,12,.05);
+      color: var(--ink);
+    }
+
+    .sb-link.active {
+      background: #fff;
+      color: var(--ink);
+      font-weight: 600;
+      box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+
+    .sb-link.active svg {
+      opacity: 1;
+      color: var(--orange);
+    }
+
+    .sb-link .ct {
+      margin-left: auto;
+      font-size: 11px;
+      color: var(--ink-3);
+    }
+
+    .sb-list {
+      padding: 0 10px 8px;
+      max-height: 210px;
+      overflow-y: auto;
+    }
+
+    .sb-item {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 11px;
+      border-radius: 9px;
+      font-size: 12.5px;
+      color: var(--ink-2);
+      cursor: pointer;
+      transition: background .13s, color .13s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sb-item.active {
+      background: #fff;
+      color: var(--ink);
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
+    }
+
+    .sb-item:hover {
+      background: rgba(20,16,12,.05);
+    }
+
+    .proj-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .sb-item-title {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sb-item-meta {
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--ink-3);
+    }
+
+    .sb-bottom {
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding: 10px;
+    }
+
+    .prod-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 11px;
+      border-radius: 11px;
+      cursor: pointer;
+      transition: background .14s;
+    }
+
+    .prod-chip:hover {
+      background: rgba(20,16,12,.05);
+    }
+
+    .prod-ava {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #FF9460, #FF631F);
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 13px;
+      flex-shrink: 0;
+      font-family: var(--display);
+    }
+
+    .prod-meta {
+      flex: 1;
+      min-width: 0;
+      line-height: 1.25;
+    }
+
+    .prod-l {
+      font-size: 10px;
+      color: var(--ink-3);
+      text-transform: uppercase;
+      letter-spacing: .05em;
+    }
+
+    .prod-n {
+      font-size: 13px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .user-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 11px;
+      margin-top: 2px;
+    }
+
+    .user-ava {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--ink);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .user-n {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .user-p {
+      font-size: 11px;
+      color: var(--ink-3);
+    }
+
+    /* MAIN LAYOUT */
+
+    .main {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      background: var(--bg-soft);
+    }
+
+    .topbar {
+      height: 54px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 22px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      background: rgba(250,248,244,.9);
+      backdrop-filter: blur(8px);
+      z-index: 10;
+    }
+
+    .tb-title {
+      font-size: 14px;
+      font-weight: 600;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tb-title .dim {
+      color: var(--ink-3);
+      font-weight: 500;
+    }
+
+    .tb-title .sep {
+      color: var(--ink-3);
+    }
+
+    .tb-mode-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--ink-2);
+    }
+
+    .tb-mode-pill .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--orange);
+    }
+
+    .scroll {
+      flex: 1;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+    }
+
+    .view {
+      display: none;
+    }
+
+    .view.active {
+      display: block;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 26px 64px;
+      animation: rise .25s ease;
+    }
+
+    @keyframes rise {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    .muted {
+      color: var(--ink-3);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: var(--orange-lt);
+      color: var(--orange-dk);
+      border: 1px solid var(--orange-md);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 500;
+      background: var(--bg-subtle);
+      color: var(--ink-2);
+      border: 1px solid var(--border);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 15px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      transition: background .14s, border-color .14s, transform .1s;
+    }
+
+    .btn svg {
+      width: 15px;
+      height: 15px;
+      stroke-width: 2;
+    }
+
+    .btn-pri {
+      background: var(--orange);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(255, 99, 31, .3);
+      border: 1px solid transparent;
+    }
+
+    .btn-pri:hover {
+      background: var(--orange-dk);
+    }
+
+    .btn-pri:active {
+      transform: translateY(1px);
+    }
+
+    .btn-gho {
+      background: #fff;
+      color: var(--ink-2);
+      border: 1px solid var(--border-md);
+    }
+
+    .btn-gho:hover {
+      border-color: var(--orange-md);
+      color: var(--ink);
+    }
+
+    .btn-sm {
+      padding: 7px 12px;
+      font-size: 12.5px;
+    }
+
+    /* DASHBOARD */
+
+    .hero {
+      border-radius: 18px;
+      padding: 22px 24px 20px;
+      background: radial-gradient(120% 120% at 10% 0, #FFF3EA 0, #FBF6F0 38%, #F4F1EA 100%);
+      border: 1px solid var(--border);
+      margin-bottom: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-tag {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      color: var(--orange-dk);
+      margin-bottom: 8px;
+    }
+
+    .hero h1 {
+      font-size: 26px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .hero p {
+      font-size: 14px;
+      color: var(--ink-2);
+      max-width: 520px;
+    }
+
+    .hero-cta {
+      margin-top: 14px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .hero-meta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      font-size: 11px;
+      color: var(--ink-3);
+    }
+
+    .block-label {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      margin: 20px 0 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .block-label .all {
+      margin-left: auto;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--orange-dk);
+      cursor: pointer;
+    }
+
+    .block-label .all:hover {
+      text-decoration: underline;
+    }
+
+    .proj-grid {
+      display: grid;
+      grid-template-columns: 1.15fr 1.15fr;
+      gap: 13px;
+    }
+
+    .pcard {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 18px 14px;
+      cursor: pointer;
+      transition: box-shadow .16s, transform .16s, border-color .15s;
+      text-align: left;
+    }
+
+    .pcard:hover {
+      box-shadow: 0 8px 24px rgba(20,16,12,.10);
+      transform: translateY(-2px);
+      border-color: var(--border-md);
+    }
+
+    .pcard-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .pcard-status {
+      font-size: 10.5px;
+      font-weight: 700;
+      font-family: var(--mono);
+      padding: 3px 9px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ps-active {
+      background: var(--green-lt);
+      color: var(--green);
+    }
+
+    .ps-planning {
+      background: var(--bg-subtle);
+      color: var(--ink-2);
+    }
+
+    .ps-archived {
+      background: #F1F2F4;
+      color: var(--ink-3);
+    }
+
+    .pcard h3 {
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      margin-bottom: 5px;
+    }
+
+    .pcard p {
+      font-size: 12.5px;
+      color: var(--ink-2);
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    .pbar {
+      height: 6px;
+      border-radius: 5px;
+      background: var(--bg-subtle);
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .pbar-i {
+      display: block;
+      height: 100%;
+      background: var(--orange);
+      border-radius: 5px;
+    }
+
+    .pcard-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11.5px;
+      color: var(--ink-3);
+      font-family: var(--mono);
+    }
+
+    .avastack {
+      display: flex;
+    }
+
+    .avastack span {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #fff;
+      color: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 9px;
+      font-weight: 700;
+      margin-left: -6px;
+    }
+
+    .avastack span:first-child {
+      margin-left: 0;
+    }
+
+    .quick-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .quick {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 14px 13px;
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
+      cursor: pointer;
+      transition: box-shadow .16s, transform .16s, border-color .15s;
+    }
+
+    .quick:hover {
+      box-shadow: 0 6px 20px rgba(20,16,12,.08);
+      transform: translateY(-2px);
+      border-color: var(--border-md);
+    }
+
+    .quick-ico {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .quick-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      margin-bottom: 3px;
+      font-family: var(--display);
+    }
+
+    .quick-desc {
+      font-size: 12px;
+      color: var(--ink-2);
+      line-height: 1.45;
+    }
+
+    .quick-go {
+      margin-left: auto;
+      align-self: center;
+      font-size: 16px;
+      color: var(--ink-3);
+      transition: transform .15s, color .15s;
+    }
+
+    .quick:hover .quick-go {
+      transform: translateX(3px);
+      color: var(--orange-dk);
+    }
+
+    .feed {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .feed-item {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      cursor: pointer;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .feed-item:hover {
+      border-color: var(--border-md);
+      box-shadow: 0 4px 14px rgba(20,16,12,.06);
+    }
+
+    .feed-ico {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .feed-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .feed-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .feed-meta {
+      font-size: 11.5px;
+      color: var(--ink-3);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .feed-meta b {
+      color: var(--ink-2);
+      font-weight: 600;
+    }
+
+    .status-pill {
+      font-size: 10px;
+      font-family: var(--mono);
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .st-done {
+      background: var(--green-lt);
+      color: var(--green);
+    }
+
+    .st-draft {
+      background: #ECEFF4;
+      color: var(--ink-3);
+    }
+
+    /* PROJECT VIEW */
+
+    .proj-hero {
+      border-radius: 18px;
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 22px 24px 18px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .proj-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ink-3);
+      margin-bottom: 12px;
+      cursor: pointer;
+    }
+
+    .proj-back:hover {
+      color: var(--orange-dk);
+    }
+
+    .proj-hero-top {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .proj-hero h1 {
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -.025em;
+      width: 100%;
+      margin-bottom: 4px;
+    }
+
+    .proj-goal {
+      font-size: 14px;
+      color: var(--ink-2);
+      line-height: 1.6;
+      max-width: 640px;
+      margin-bottom: 10px;
+    }
+
+    .proj-actions {
+      position: absolute;
+      top: 22px;
+      right: 22px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .proj-meta-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 22px;
+      flex-wrap: wrap;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      margin-top: 8px;
+    }
+
+    .pm-block .l {
+      font-size: 10.5px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+      color: var(--ink-3);
+      margin-bottom: 5px;
+    }
+
+    .pm-block .v {
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .proj-layout {
+      display: grid;
+      grid-template-columns: minmax(0,1.4fr) minmax(0,1fr);
+      gap: 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      padding: 14px 16px 13px;
+    }
+
+    .card-title {
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .card-sub {
+      font-size: 12px;
+      color: var(--ink-3);
+      margin-bottom: 8px;
+    }
+
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .artifact-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 9px;
+      border-radius: 9px;
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: background .13s;
+    }
+
+    .artifact-row:hover {
+      background: var(--bg-subtle);
+    }
+
+    .artifact-ico {
+      width: 26px;
+      height: 26px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: var(--bg-soft);
+      border: 1px solid var(--border);
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .artifact-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .artifact-title {
+      font-size: 12.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .artifact-meta {
+      font-size: 11px;
+      color: var(--ink-3);
+      margin-top: 2px;
+    }
+
+    .chip {
+      font-size: 10px;
+      font-family: var(--mono);
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: var(--bg-subtle);
+      color: var(--ink-3);
+      white-space: nowrap;
+    }
+
+    /* TASK LIBRARY */
+
+    .search-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #fff;
+      border: 1px solid var(--border-md);
+      border-radius: 12px;
+      padding: 11px 14px;
+      margin-bottom: 16px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .search-row:focus-within {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px var(--orange-lt);
+    }
+
+    .search-row svg {
+      width: 17px;
+      height: 17px;
+      stroke-width: 2;
+      color: var(--ink-3);
+      flex-shrink: 0;
+    }
+
+    .search-row input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 14px;
+      background: transparent;
+      color: var(--ink);
+    }
+
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .filter-pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 500;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--ink-2);
+      cursor: pointer;
+      transition: background .14s, border-color .14s, color .14s;
+    }
+
+    .filter-pill.on {
+      background: var(--ink);
+      color: #fff;
+      border-color: var(--ink);
+    }
+
+    .filter-pill span {
+      font-size: 10px;
+      opacity: .8;
+    }
+
+    .tasks-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+
+    .task-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 13px;
+      padding: 12px 13px;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      cursor: pointer;
+      transition: border-color .14s, box-shadow .16s, transform .16s;
+    }
+
+    .task-card:hover {
+      border-color: var(--orange-md);
+      box-shadow: 0 5px 16px rgba(20,16,12,.08);
+      transform: translateY(-1px);
+    }
+
+    .task-ico {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .task-main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .task-name {
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      font-family: var(--display);
+    }
+
+    .task-desc {
+      font-size: 11.5px;
+      color: var(--ink-2);
+      line-height: 1.45;
+    }
+
+    .task-badge {
+      margin-top: 6px;
+      font-size: 9.5px;
+      font-weight: 700;
+      font-family: var(--mono);
+      color: var(--orange);
+      background: var(--orange-lt);
+      border-radius: 5px;
+      padding: 2px 6px;
+      display: inline-block;
+    }
+
+    /* CHAT & PRIVATE WORKSPACE */
+
+    .workspace {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+    }
+
+    .thread-wrap {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .thread {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 26px 24px 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .empty-state {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 10vh 24px 0;
+      text-align: center;
+      animation: rise .3s ease;
+    }
+
+    .es-mark {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      background: var(--orange);
+      display: grid;
+      place-items: center;
+      margin: 0 auto 22px;
+      box-shadow: 0 6px 22px rgba(255,99,31,.3);
+      color: #fff;
+    }
+
+    .es-title {
+      font-family: var(--display);
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -.03em;
+      margin-bottom: 8px;
+    }
+
+    .es-sub {
+      font-size: 15px;
+      color: var(--ink-2);
+      max-width: 460px;
+      margin: 0 auto 26px;
+    }
+
+    .es-grid {
+      display: grid;
+      grid-template-columns: repeat(2,1fr);
+      gap: 11px;
+      text-align: left;
+    }
+
+    .es-item {
+      display: flex;
+      gap: 13px;
+      align-items: flex-start;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 15px;
+      background: #fff;
+      transition: border-color .15s, box-shadow .16s, transform .16s;
+    }
+
+    .es-item:hover {
+      border-color: var(--orange-md);
+      box-shadow: 0 6px 20px rgba(20,16,12,.06);
+      transform: translateY(-2px);
+    }
+
+    .es-ico {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 17px;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .es-t {
+      font-size: 13.5px;
+      font-weight: 700;
+      margin-bottom: 2px;
+      font-family: var(--display);
+    }
+
+    .es-d {
+      font-size: 12px;
+      color: var(--ink-2);
+      line-height: 1.45;
+    }
+
+    .msg {
+      display: flex;
+      gap: 13px;
+      animation: rise .3s ease;
+    }
+
+    .msg-ava {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      flex-shrink: 0;
+      display: grid;
+      place-items: center;
+    }
+
+    .msg-ava.ai {
+      background: var(--orange);
+      color: #fff;
+      box-shadow: 0 2px 7px rgba(255, 99, 31, .3);
+    }
+
+    .msg-ava.me {
+      background: var(--ink);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .msg-body {
+      flex: 1;
+      min-width: 0;
+      padding-top: 2px;
+    }
+
+    .msg.user {
+      justify-content: flex-end;
+    }
+
+    .msg.user .msg-body {
+      flex: 0 1 auto;
+      max-width: 78%;
+      order: -1;
+    }
+
+    .bubble {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 16px 16px 4px 16px;
+      padding: 10px 14px;
+      font-size: 14.5px;
+      line-height: 1.55;
+    }
+
+    .skill-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--orange-dk);
+      background: var(--orange-lt);
+      border: 1px solid var(--orange-md);
+      padding: 3px 9px;
+      border-radius: 7px;
+      margin-bottom: 6px;
+    }
+
+    .ai-text {
+      font-size: 14.5px;
+      line-height: 1.65;
+      color: var(--ink);
+    }
+
+    .ai-text p {
+      margin-bottom: 10px;
+    }
+
+    .ai-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .suggest-row {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .suggest-pill {
+      border: 1px solid var(--border-md);
+      background: #fff;
+      padding: 6px 11px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: border-color .14s, background .14s;
+    }
+
+    .suggest-pill:hover {
+      border-color: var(--orange-md);
+      background: var(--orange-lt);
+    }
+
+    .typing {
+      display: flex;
+      gap: 5px;
+      padding: 6px 0;
+    }
+
+    .typing span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--ink-3);
+      animation: blink 1.3s infinite both;
+    }
+
+    .typing span:nth-child(2) { animation-delay: .2s; }
+    .typing span:nth-child(3) { animation-delay: .4s; }
+
+    @keyframes blink {
+      0%, 80%, 100% { opacity: .25; transform: translateY(0); }
+      40% { opacity: 1; transform: translateY(-3px); }
+    }
+
+    /* ARTIFACT CARD (INLINE) */
+
+    .art {
+      border: 1px solid var(--border-md);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #fff;
+      margin-top: 6px;
+      box-shadow: 0 4px 18px rgba(20,16,12,.06);
+    }
+
+    .art-head {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-subtle);
+    }
+
+    .art-ico {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      display: grid;
+      place-items: center;
+      font-size: 16px;
+      background: #fff;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .art-h-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .art-h-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      font-family: var(--display);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .art-h-sub {
+      font-size: 11px;
+      color: var(--ink-3);
+      font-family: var(--mono);
+    }
+
+    .art-h-actions {
+      display: flex;
+      gap: 5px;
+    }
+
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: var(--ink-2);
+      border: 1px solid transparent;
+      background: transparent;
+      transition: background .14s, color .14s, border-color .14s;
+    }
+
+    .icon-btn:hover {
+      background: #fff;
+      border-color: var(--border-md);
+      color: var(--ink);
+    }
+
+    .icon-btn svg {
+      width: 15px;
+      height: 15px;
+      stroke-width: 1.9;
+    }
+
+    .art-content {
+      padding: 8px 18px 14px;
+      max-height: 420px;
+      overflow-y: auto;
+    }
+
+    .art-foot {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 9px 16px;
+      border-top: 1px solid var(--border);
+      background: var(--bg-subtle);
+    }
+
+    /* DOC BODY */
+
+    .doc {
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+
+    .doc h2 {
+      font-size: 14px;
+      font-weight: 700;
+      margin: 16px 0 8px;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .doc h2 .n {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--orange-dk);
+      background: var(--orange-lt);
+      border: 1px solid var(--orange-md);
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .doc h3 {
+      font-size: 13px;
+      font-weight: 700;
+      margin: 12px 0 5px;
+    }
+
+    .doc p {
+      color: var(--ink-2);
+      margin-bottom: 8px;
+    }
+
+    .doc ul {
+      list-style: none;
+      margin: 6px 0 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .doc ul li {
+      padding-left: 17px;
+      position: relative;
+      color: var(--ink-2);
+    }
+
+    .doc ul li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--orange);
+      font-size: 11px;
+      top: 1px;
+    }
+
+    .doc .tbl {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 8px 0 12px;
+    }
+
+    .doc table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    .doc th {
+      background: var(--bg-subtle);
+      text-align: left;
+      padding: 7px 10px;
+      font-weight: 700;
+      font-size: 11px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .doc td {
+      padding: 7px 10px;
+      border-bottom: 1px solid var(--border);
+      color: var(--ink-2);
+      vertical-align: top;
+    }
+
+    .doc tr:last-child td {
+      border-bottom: none;
+    }
+
+    .doc .box {
+      background: var(--orange-lt);
+      border: 1px solid var(--orange-md);
+      border-left: 3px solid var(--orange);
+      border-radius: 9px;
+      padding: 11px 13px;
+      font-size: 13px;
+      color: #7a3008;
+      margin: 10px 0;
+      line-height: 1.55;
+    }
+
+    .editable {
+      outline: none;
+      border-radius: 5px;
+      transition: box-shadow .15s, background .15s;
+    }
+
+    .edit-on .editable:hover {
+      background: var(--orange-lt);
+    }
+
+    .editable:focus {
+      box-shadow: 0 0 0 3px var(--orange-lt);
+      background: var(--orange-lt);
+    }
+
+    /* COMPOSER */
+
+    .composer-wrap {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 0 24px 22px;
+      background: linear-gradient(to top, var(--bg-soft) 55%, transparent);
+      pointer-events: none;
+    }
+
+    .composer {
+      max-width: 760px;
+      margin: 0 auto;
+      pointer-events: auto;
+    }
+
+    .armed {
+      display: none;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .armed.show {
+      display: flex;
+    }
+
+    .armed-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--orange-lt);
+      border: 1px solid var(--orange-md);
+      color: var(--orange-dk);
+      padding: 6px 10px 6px 12px;
+      border-radius: 10px;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .armed-chip .x {
+      width: 18px;
+      height: 18px;
+      border-radius: 6px;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      color: var(--orange-dk);
+      transition: background .14s;
+    }
+
+    .armed-chip .x:hover {
+      background: var(--orange-md);
+    }
+
+    .comp-box {
+      border: 1px solid var(--border-md);
+      border-radius: 18px;
+      background: #fff;
+      box-shadow: 0 4px 20px rgba(20,16,12,.07);
+      padding: 8px 8px 8px 8px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .comp-box:focus-within {
+      border-color: var(--orange);
+      box-shadow: 0 4px 24px rgba(255,99,31,.15);
+    }
+
+    .comp-input {
+      width: 100%;
+      border: none;
+      outline: none;
+      resize: none;
+      font-size: 15px;
+      line-height: 1.5;
+      padding: 8px 10px 4px;
+      background: transparent;
+      color: var(--ink);
+      max-height: 160px;
+    }
+
+    .comp-input::placeholder {
+      color: var(--ink-3);
+    }
+
+    .comp-bar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 3px 4px;
+    }
+
+    .comp-tool {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink-2);
+      border: 1px solid var(--border-md);
+      transition: all .14s;
+    }
+
+    .comp-tool:hover {
+      border-color: var(--orange);
+      color: var(--orange-dk);
+      background: var(--orange-lt);
+    }
+
+    .comp-tool svg {
+      width: 15px;
+      height: 15px;
+      stroke-width: 2;
+    }
+
+    .comp-spacer {
+      flex: 1;
+    }
+
+    .send {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--orange);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      transition: background .14s, transform .1s, opacity .14s;
+      box-shadow: 0 2px 7px rgba(255,99,31,.3);
+    }
+
+    .send:hover {
+      background: var(--orange-dk);
+    }
+
+    .send:active {
+      transform: scale(.94);
+    }
+
+    .send.disabled {
+      opacity: .4;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    .send svg {
+      width: 17px;
+      height: 17px;
+      stroke-width: 2.4;
+    }
+
+    .comp-hint {
+      text-align: center;
+      font-size: 11px;
+      color: var(--ink-3);
+      margin-top: 7px;
+    }
+
+    /* RESPONSIVE (mobile shell only) */
+
+    .scrim {
+      display: none;
+    }
+
+    .hamb {
+      display: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      align-items: center;
+      justify-content: center;
+      color: var(--ink-2);
+    }
+
+    .hamb:hover {
+      background: var(--bg-subtle);
+    }
+
+    @media (max-width: 860px) {
+      :root {
+        --sidebar-width: 0px;
+      }
+
+      .app {
+        grid-template-columns: 1fr;
+      }
+
+      .sb {
+        position: fixed;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 280px;
+        transform: translateX(-100%);
+        transition: transform .25s ease;
+        box-shadow: 0 0 40px rgba(0,0,0,.22);
+      }
+
+      .sb.open {
+        transform: none;
+      }
+
+      .scrim {
+        display: block;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.35);
+        z-index: 35;
+        opacity: 0;
+        visibility: hidden;
+        transition: .2s;
+      }
+
+      .scrim.show {
+        opacity: 1;
+        visibility: visible;
+      }
+
+      .hamb {
+        display: flex;
+      }
+
+      .page {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .thread, .composer, .empty-state {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .proj-layout, .proj-grid, .quick-grid, .tasks-grid, .es-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+<div class="scrim" id="scrim" onclick="toggleSidebar(false)"></div>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sb" id="sidebar">
+    <div class="sb-top">
+      <div class="brand">
+        <div class="brand-mark" aria-label="Product Space logo">
+          <!-- SIMPLE INLINE SVG LOGO: stylized P in a rounded square -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="none">
+            <defs>
+              <linearGradient id="ps_grad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0" stop-color="#FFE4D1"/>
+                <stop offset="0.45" stop-color="#FF9460"/>
+                <stop offset="1" stop-color="#FF631F"/>
+              </linearGradient>
+            </defs>
+            <rect x="3" y="3" width="18" height="18" rx="6" fill="url(#ps_grad)" />
+            <path d="M9 17V7h4.3c2.1 0 3.7 1.5 3.7 3.6 0 2.2-1.7 3.7-3.8 3.7H11" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="brand-name">
+          Product <span>Space</span>
+        </div>
+      </div>
+
+      <button class="new-task" onclick="openTaskLibrary()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        Новая продуктовая задача
+      </button>
+    </div>
+
+    <div class="sb-section-label">
+      Навигация
+    </div>
+    <nav class="sb-nav">
+      <button class="sb-link active" id="nav-dashboard" onclick="goView('dashboard')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="14" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+        </svg>
+        Дашборд
+      </button>
+
+      <button class="sb-link" id="nav-tasks" onclick="goView('tasks')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M9 11l3 3 8-8" />
+          <path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9" />
+        </svg>
+        Библиотека задач
+        <span class="ct" id="taskCount"></span>
+      </button>
+
+      <button class="sb-link" id="nav-artifacts" onclick="goView('artifacts')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" />
+        </svg>
+        Артефакты
+      </button>
+
+      <button class="sb-link" id="nav-private" onclick="goView('private')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+          <path d="M12 15a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+          <path d="M7 10V8a5 5 0 0 1 10 0v2" />
+          <rect x="5" y="10" width="14" height="10" rx="2" />
+        </svg>
+        Личный workspace
+      </button>
+    </nav>
+
+    <div class="sb-section-label">
+      Проекты
+      <small id="projCount"></small>
+    </div>
+    <div class="sb-list" id="projList"></div>
+
+    <div class="sb-section-label">
+      Личные чаты
+    </div>
+    <div class="sb-list" id="chatList"></div>
+
+    <div class="sb-bottom">
+      <div class="prod-chip" onclick="openProfile()">
+        <div class="prod-ava" id="prodAva">P</div>
+        <div class="prod-meta">
+          <div class="prod-l">Продукт</div>
+          <div class="prod-n" id="prodName">Unnamed product</div>
+        </div>
+        <svg class="gear" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-2.82 1.17V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15H4.5a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 6 9.4l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 11 7.6V4.5a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 2.82 1.17l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 11h.1a2 2 0 1 1 0 4h-.1z"></path>
+        </svg>
+      </div>
+
+      <div class="user-row">
+        <div class="user-ava">AT</div>
+        <div>
+          <div class="user-n">Arman</div>
+          <div class="user-p">Head of Product</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="topbar">
+      <button class="hamb" onclick="toggleSidebar(true)">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
+      <div class="tb-title" id="tbTitle">
+        <span class="dim">Home</span>
+        <span class="sep">·</span>
+        Product Space
+      </div>
+      <div class="tb-mode-pill" id="tbMode">
+        <div class="dot"></div>
+        Личный режим
+      </div>
+    </div>
+
+    <div class="scroll">
+
+      <!-- DASHBOARD -->
+      <div class="view active" id="view-dashboard">
+        <section class="page">
+          <div class="hero">
+            <div class="hero-tag">Product tasks · под ключ</div>
+            <h1>Все продуктовые задачи в одном space</h1>
+            <p>Выберите задачу, опишите контекст продукта — и получите PRD, GTM, анализ или ресерч, готовый к расшариванию в команде.</p>
+
+            <div class="hero-cta">
+              <button class="btn btn-pri" onclick="openTaskLibrary()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                Запустить новую задачу
+              </button>
+              <button class="btn btn-gho" onclick="goView('private')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path d="M12 15a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                  <path d="M7 10V8a5 5 0 0 1 10 0v2" />
+                  <rect x="5" y="10" width="14" height="10" rx="2"/>
+                </svg>
+                Личный workspace
+              </button>
+            </div>
+
+            <div class="hero-meta">
+              <span class="pill">Task‑first · контекст продукта подставляется автоматически</span>
+              <span class="pill">Shortcuts для команды: готовые артефакты по задачам</span>
+            </div>
+          </div>
+
+          <div class="block-label">
+            Активные проекты
+            <span class="all" onclick="openNewProject()">Новый проект</span>
+          </div>
+          <div class="proj-grid" id="dashProjects"></div>
+
+          <div class="block-label">
+            Быстрые задачи
+            <span class="all" onclick="openTaskLibrary()">Все задачи</span>
+          </div>
+          <div class="quick-grid" id="dashQuick"></div>
+
+          <div class="block-label">
+            Недавние артефакты
+            <span class="all" onclick="goView('artifacts')">Открыть список</span>
+          </div>
+          <div class="feed" id="dashFeed"></div>
+        </section>
+      </div>
+
+      <!-- PROJECT VIEW -->
+      <div class="view" id="view-project">
+        <section class="page" id="projHost"></section>
+      </div>
+
+      <!-- TASK LIBRARY -->
+      <div class="view" id="view-tasks">
+        <section class="page">
+          <div class="badge">Task Library</div>
+          <h1 style="font-size:22px;margin:10px 0 4px;">Задачи для продукта</h1>
+          <p class="muted" style="font-size:14px;max-width:540px;margin-bottom:16px;">
+            Выберите задачу, опишите контекст и цель — Product Space соберёт структурированный артефакт, готовый к расшариванию в проект.
+          </p>
+
+          <div class="search-row">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <circle cx="11" cy="11" r="7" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <input id="taskSearch" placeholder="Найти задачу: GTM, PRD, JTBD, ресёрч…" oninput="onTaskSearch(this.value)" />
+          </div>
+
+          <div class="filters" id="taskFilters"></div>
+          <div class="tasks-grid" id="taskResults"></div>
+        </section>
+      </div>
+
+      <!-- ARTIFACTS (TEAM SPACE OVERVIEW) -->
+      <div class="view" id="view-artifacts">
+        <section class="page" id="artHost"></section>
+      </div>
+
+      <!-- PRIVATE WORKSPACE (CHAT + DRAFTS) -->
+      <div class="view" id="view-private">
+        <section class="page">
+          <div class="badge">Личный чат · private</div>
+          <h1 style="font-size:22px;margin:10px 0 4px;">Приватный product‑workspace</h1>
+          <p class="muted" style="font-size:14px;max-width:540px;">
+            Всё, что вы делаете здесь, видно только вам, пока вы сами не отправите артефакт в проект или командный space.
+          </p>
+        </section>
+
+        <section class="workspace">
+          <div class="thread-wrap" id="threadWrap">
+            <div id="threadHost"></div>
+          </div>
+
+          <div class="composer-wrap">
+            <div class="composer">
+              <div class="armed" id="armed">
+                <div class="armed-chip">
+                  <span id="armedIco">📄</span>
+                  <b id="armedName">GTM‑стратегия</b>
+                  <span class="x" onclick="disarmSkill()">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+
+              <div class="comp-box">
+                <textarea class="comp-input" id="input" rows="1"
+                          placeholder="Опишите задачу и контекст продукта. Пример: «Нужен GTM‑план для запуска дебетовой карты в Германии»."
+                          oninput="autoGrow(this); toggleSend()"
+                          onkeydown="onKey(event)"></textarea>
+
+                <div class="comp-bar">
+                  <button class="comp-tool" onclick="openTaskLibraryFromComposer()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z" />
+                    </svg>
+                    Выбрать задачу
+                  </button>
+                  <div class="comp-spacer"></div>
+                  <button class="send disabled" id="sendBtn" onclick="send()">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M12 19V5M5 12l7-7 7 7" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <div class="comp-hint" id="compHint">
+                Режим по умолчанию — приватный. Чтобы поделиться результатом, используйте кнопки «Прикрепить к проекту» или «Поделиться в команде» на артефакте.
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script>
+  const TEAM_COLORS = ["#FF631F", "#2D6CDF", "#0D8A8A", "#B0299A", "#2F9E6B", "#7A5CD6"];
+
+  const state = {
+    profile: {
+      name: "Unnamed product",
+      stage: "",
+      desc: "B2B SaaS / fintech продукт.",
+    },
+    projects: [
+      {
+        id: "rev-card",
+        name: "Debet card DACH",
+        product: "Debit card",
+        status: "active",
+        goal: "Запустить дебетовую карту в Германии и Австрии.",
+        progress: 42,
+        members: ["AR", "DS", "PM"],
+        chats: 3
+      },
+      {
+        id: "sub-pay",
+        name: "Subscriptions · Pay",
+        product: "Payments",
+        status: "planning",
+        goal: "Проверить гипотезы по подписочной модели для SME.",
+        progress: 18,
+        members: ["AR", "PO"],
+        chats: 1
+      }
+    ],
+    tasks: [
+      { id: "gtm", cat: "pmm", ico: "📣", name: "GTM‑стратегия", desc: "Каналы, сообщения, приоритеты запусков и KPI по GTM." },
+      { id: "prd", cat: "pm", ico: "🧩", name: "PRD / спецификация", desc: "Структурированное описание фичи: цели, user stories, скоуп." },
+      { id: "jtbd", cat: "pm", ico: "🧠", name: "JTBD‑карта", desc: "Functional / emotional / social jobs для сегмента." },
+      { id: "desk", cat: "res", ico: "📚", name: "Desk research", desc: "Сбор и синтез вторичных источников по рынку." },
+      { id: "synth", cat: "res", ico: "🗂", name: "Synthesis / Affinity", desc: "Сгруппированные инсайты после интервью или опросов." },
+      { id: "metrics", cat: "data", ico: "📈", name: "Metrics / tracking plan", desc: "Ключевые метрики, события, схема трекинга." },
+      { id: "copy", cat: "pmm", ico: "✍️", name: "Копирайтинг и месседжи", desc: "Hero, value prop и ключевые сообщения для лендинга." },
+      { id: "roadmap", cat: "pm", ico: "🗺", name: "Roadmap / приоритизация", desc: "Now–Next–Later + RICE‑оценка по фичам." }
+    ],
+    recentArtifacts: [],
+    chats: [],
+    currentChat: null,
+    armedTask: null,
+    taskFilter: "all",
+    taskQuery: ""
+  };
+
+  function P() { return state.profile; }
+
+  function initProfile() {
+    document.getElementById('prodName').textContent = P().name;
+    document.getElementById('prodAva').textContent = P().name.charAt(0).toUpperCase() || "P";
+  }
+
+  function renderSidebarProjects() {
+    const el = document.getElementById('projList');
+    el.innerHTML = state.projects.map(p => {
+      const dotColor =
+        p.status === "active" ? "#1A7A4A" :
+        p.status === "planning" ? "#757575" : "#B0B0B0";
+      return `
+        <div class="sb-item" onclick="openProject('${p.id}')">
+          <span class="proj-dot" style="background:${dotColor}"></span>
+          <span class="sb-item-title">${escapeHtml(p.name)}</span>
+          <span class="sb-item-meta">${p.chats} chats</span>
+        </div>
+      `;
+    }).join('');
+    document.getElementById('projCount').textContent = state.projects.length + " проекта";
+  }
+
+  function renderSidebarChats() {
+    const el = document.getElementById('chatList');
+    if (!state.chats.length) {
+      el.innerHTML = `<div style="padding:10px 11px;font-size:12.5px;color:var(--ink-3);">Пока нет личных чатов.</div>`;
+      return;
+    }
+    el.innerHTML = state.chats.slice(0,8).map(c => `
+      <div class="sb-item${state.currentChat && c.id === state.currentChat.id ? " active" : ""}"
+           onclick="openChat('${c.id}')">
+        <span class="sb-item-title">${escapeHtml(c.title)}</span>
+      </div>
+    `).join('');
+  }
+
+  function renderDashboard() {
+    const hostP = document.getElementById('dashProjects');
+    hostP.innerHTML = state.projects.map(p => projectCard(p)).join('');
+
+    const hostQ = document.getElementById('dashQuick');
+    const quickIds = ["gtm","prd","desk","metrics"];
+    hostQ.innerHTML = quickIds.map(id => {
+      const s = state.tasks.find(t => t.id === id);
+      if (!s) return "";
+      return quickCard(s);
+    }).join('');
+
+    const hostF = document.getElementById('dashFeed');
+    if (!state.recentArtifacts.length) {
+      hostF.innerHTML = `<div style="padding:12px 14px;border:1px dashed var(--border);border-radius:12px;font-size:13px;color:var(--ink-3);">
+        Здесь появятся последние артефакты, которые вы прикрепите к проектам.
+      </div>`;
+    } else {
+      hostF.innerHTML = state.recentArtifacts.slice(0,5).map(a => feedItem(a)).join('');
+    }
+  }
+
+  function projectCard(p) {
+    const stClass =
+      p.status === "active" ? "ps-active" :
+      p.status === "planning" ? "ps-planning" : "ps-archived";
+    const stTxt =
+      p.status === "active" ? "В работе" :
+      p.status === "planning" ? "Планирование" : "Архив";
+    const bar = Math.max(4, Math.min(100, ~~p.progress));
+    const dotColor =
+      p.status === "active" ? "#1A7A4A" :
+      p.status === "planning" ? "#757575" : "#B0B0B0";
+    return `
+      <button class="pcard" onclick="openProject('${p.id}')">
+        <div class="pcard-top">
+          <span class="pcard-status ${stClass}">
+            <span class="proj-dot" style="background:${dotColor}"></span>${stTxt}
+          </span>
+          <span style="margin-left:auto;font-size:11px;color:var(--ink-3);font-family:var(--mono);">${escapeHtml(p.product)}</span>
+        </div>
+        <h3>${escapeHtml(p.name)}</h3>
+        <p>${escapeHtml(p.goal)}</p>
+        <div class="pbar">
+          <span class="pbar-i" style="width:${bar}%"></span>
+        </div>
+        <div class="pcard-foot">
+          <span>${bar}% done · ${p.chats} chats</span>
+          <span class="avastack">
+            ${p.members.map((m,i) => `<span style="background:${TEAM_COLORS[i % TEAM_COLORS.length]}">${m}</span>`).join('')}
+          </span>
+        </div>
+      </button>
+    `;
+  }
+
+  function quickCard(s) {
+    return `
+      <button class="quick" onclick="armSkill('${s.id}')">
+        <div class="quick-ico">${s.ico}</div>
+        <div style="flex:1">
+          <div class="quick-title">${escapeHtml(s.name)}</div>
+          <div class="quick-desc">${escapeHtml(s.desc)}</div>
+        </div>
+        <div class="quick-go">→</div>
+      </button>
+    `;
+  }
+
+  function feedItem(a) {
+    return `
+      <div class="feed-item" onclick="openArtifactFromFeed('${a.id}')">
+        <div class="feed-ico">📄</div>
+        <div class="feed-main">
+          <div class="feed-title">${escapeHtml(a.title)}</div>
+          <div class="feed-meta">
+            <b>${escapeHtml(a.projectName || "Без проекта")}</b>
+            <span>${escapeHtml(a.skillName || "")}</span>
+          </div>
+        </div>
+        <span class="status-pill ${a.status === 'done' ? 'st-done' : 'st-draft'}">
+          ${a.status === 'done' ? 'готово' : 'draft'}
+        </span>
+      </div>
+    `;
+  }
+
+  function renderTaskLibrary() {
+    document.getElementById('taskCount').textContent = state.tasks.length;
+    const filtersEl = document.getElementById('taskFilters');
+    filtersEl.innerHTML = `
+      <button class="filter-pill ${state.taskFilter === 'all' ? 'on' : ''}" onclick="setTaskCat('all')">
+        Все <span>(${state.tasks.length})</span>
+      </button>
+      <button class="filter-pill ${state.taskFilter === 'pm' ? 'on' : ''}" onclick="setTaskCat('pm')">PM</button>
+      <button class="filter-pill ${state.taskFilter === 'pmm' ? 'on' : ''}" onclick="setTaskCat('pmm')">PMM</button>
+      <button class="filter-pill ${state.taskFilter === 'res' ? 'on' : ''}" onclick="setTaskCat('res')">Research</button>
+      <button class="filter-pill ${state.taskFilter === 'data' ? 'on' : ''}" onclick="setTaskCat('data')">Data</button>
+    `;
+    renderTaskResults();
+  }
+
+  function setTaskCat(cat) {
+    state.taskFilter = cat;
+    renderTaskLibrary();
+  }
+
+  function onTaskSearch(v) {
+    state.taskQuery = (v || "").toLowerCase().trim();
+    renderTaskResults();
+  }
+
+  function renderTaskResults() {
+    const host = document.getElementById('taskResults');
+    let list = state.tasks;
+    if (state.taskFilter !== "all") {
+      list = list.filter(t => t.cat === state.taskFilter);
+    }
+    if (state.taskQuery) {
+      const q = state.taskQuery;
+      list = list.filter(t =>
+        t.name.toLowerCase().includes(q) ||
+        t.desc.toLowerCase().includes(q)
+      );
+    }
+    if (!list.length) {
+      host.innerHTML = `<div style="padding:18px 4px;font-size:13px;color:var(--ink-3);">
+        Ничего не найдено. Попробуйте другой запрос или категорию.
+      </div>`;
+      return;
+    }
+    host.innerHTML = list.map(t => `
+      <button class="task-card" onclick="armSkill('${t.id}')">
+        <div class="task-ico">${t.ico}</div>
+        <div class="task-main">
+          <div class="task-name">${escapeHtml(t.name)}</div>
+          <div class="task-desc">${escapeHtml(t.desc)}</div>
+          <span class="task-badge">${t.cat.toUpperCase()}</span>
+        </div>
+      </button>
+    `).join('');
+  }
+
+  function getProject(id) {
+    return state.projects.find(p => p.id === id);
+  }
+
+  function openProject(id) {
+    const p = getProject(id);
+    if (!p) return;
+    goView('project');
+    renderProject(p);
+  }
+
+  function renderProject(p) {
+    const host = document.getElementById('projHost');
+    const bar = Math.max(4, Math.min(100, ~~p.progress));
+    const dotColor =
+      p.status === "active" ? "#1A7A4A" :
+      p.status === "planning" ? "#757575" : "#B0B0B0";
+
+    host.innerHTML = `
+      <div class="proj-hero">
+        <button class="proj-back" onclick="goView('dashboard')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 12H5M12 19l-7-7 7-7" />
+          </svg>
+          Ко всем проектам
+        </button>
+
+        <div class="proj-actions">
+          <button class="btn btn-gho btn-sm" onclick="openProfile()">Контекст продукта</button>
+          <button class="btn btn-pri btn-sm" onclick="openTaskLibraryForProject('${p.id}')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path d="M12 5v14M5 12h14" />
+            </svg>
+            Новая задача
+          </button>
+        </div>
+
+        <div class="proj-hero-top">
+          <h1>${escapeHtml(p.name)}</h1>
+        </div>
+        <div class="proj-goal">${escapeHtml(p.goal)}</div>
+
+        <div class="proj-meta-row">
+          <div class="pm-block">
+            <div class="l">Продукт</div>
+            <div class="v">${escapeHtml(p.product)}</div>
+          </div>
+          <div class="pm-block">
+            <div class="l">Статус</div>
+            <div class="v">
+              <span class="proj-dot" style="background:${dotColor}"></span>
+              ${p.status === "active" ? "В работе" : p.status === "planning" ? "Планирование" : "Архив"}
+            </div>
+          </div>
+          <div class="pm-block">
+            <div class="l">Прогресс</div>
+            <div class="v">
+              <span>${bar}%</span>
+              <span style="flex:0 0 120px">
+                <div class="pbar"><span class="pbar-i" style="width:${bar}%"></span></div>
+              </span>
+            </div>
+          </div>
+          <div class="pm-block">
+            <div class="l">Команда</div>
+            <div class="v">
+              <span class="avastack">
+                ${p.members.map((m,i) => `<span style="background:${TEAM_COLORS[i % TEAM_COLORS.length]}">${m}</span>`).join('')}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="proj-layout">
+        <div class="card">
+          <div class="card-title">Артефакты проекта</div>
+          <div class="card-sub">Все документы, которые были явно прикреплены к этому проекту из личного workspace.</div>
+          <div class="card-list">
+            ${projectArtifactsPlaceholder()}
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">Активные задачи</div>
+          <div class="card-sub">Что сейчас в работе: GTM, PRD, ресёрчи и другие product‑таски.</div>
+          <div class="card-list">
+            <div class="artifact-row" onclick="openTaskLibraryForProject('${p.id}')">
+              <div class="artifact-ico">➕</div>
+              <div class="artifact-main">
+                <div class="artifact-title">Запустить новую задачу</div>
+                <div class="artifact-meta">Откроется библиотека задач с фильтром по продукту.</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px;border-top:1px dashed var(--border);padding-top:10px;font-size:12px;color:var(--ink-3);">
+            Личный чат остаётся приватным — чтобы поделиться артефактом, используйте кнопку <b>«Прикрепить к проекту»</b> на нужном документе.
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function projectArtifactsPlaceholder() {
+    return `
+      <div class="artifact-row">
+        <div class="artifact-ico">📄</div>
+        <div class="artifact-main">
+          <div class="artifact-title">Пока нет артефактов</div>
+          <div class="artifact-meta">Отправьте результат из личного workspace, чтобы он появился здесь.</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderArtifactsView() {
+    const host = document.getElementById('artHost');
+    if (!state.recentArtifacts.length) {
+      host.innerHTML = `
+        <div class="badge">Team Space</div>
+        <h1 style="font-size:22px;margin:10px 0 4px;">Артефакты по задачам</h1>
+        <p class="muted" style="font-size:14px;max-width:540px;margin-bottom:18px;">
+          Здесь будут появляться все документы, которые вы прикрепите к проектам из личного workspace.
+        </p>
+        <div style="padding:18px 16px;border-radius:14px;border:1px dashed var(--border);background:#fff;">
+          <b>Пока пусто.</b> Откройте личный workspace, выполните любую задачу и нажмите «Прикрепить к проекту».
+        </div>
+      `;
+      return;
+    }
+    host.innerHTML = `
+      <div class="badge">Team Space</div>
+      <h1 style="font-size:22px;margin:10px 0 4px;">Артефакты по задачам</h1>
+      <p class="muted" style="font-size:14px;max-width:540px;margin-bottom:16px;">
+        Сводка по всем документам, которые были явно отправлены в проекты и командный space.
+      </p>
+
+      <div class="card">
+        <div class="card-title">Последние документы</div>
+        <div class="card-list">
+          ${state.recentArtifacts.map(a => `
+            <div class="artifact-row" onclick="openArtifactFromFeed('${a.id}')">
+              <div class="artifact-ico">📄</div>
+              <div class="artifact-main">
+                <div class="artifact-title">${escapeHtml(a.title)}</div>
+                <div class="artifact-meta">
+                  ${escapeHtml(a.projectName || "Без проекта")} ·
+                  ${escapeHtml(a.skillName || "Task")}
+                </div>
+              </div>
+              <span class="chip">${a.status === 'done' ? 'готово' : 'draft'}</span>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+  }
+
+  function renderEmptyThread() {
+    const host = document.getElementById('threadHost');
+    host.innerHTML = `
+      <div class="empty-state">
+        <div class="es-mark">🔒</div>
+        <div class="es-title">Личный product‑workspace</div>
+        <div class="es-sub">
+          Здесь вы можете экспериментировать, очищать мысли, собирать PRD и GTM — ничего не уйдёт в команду,
+          пока вы сами не нажмёте «Прикрепить к проекту».
+        </div>
+
+        <div class="es-grid">
+          <button class="es-item" onclick="armSkill('gtm')">
+            <div class="es-ico">📣</div>
+            <div>
+              <div class="es-t">GTM‑стратегия</div>
+              <div class="es-d">Каналы, месседжи и приоритеты запусков для одного продукта.</div>
+            </div>
+          </button>
+          <button class="es-item" onclick="armSkill('prd')">
+            <div class="es-ico">🧩</div>
+            <div>
+              <div class="es-t">PRD / спецификация</div>
+              <div class="es-d">Цели, user stories, сценарии, риски и скоуп релиза.</div>
+            </div>
+          </button>
+          <button class="es-item" onclick="armSkill('desk')">
+            <div class="es-ico">📚</div>
+            <div>
+              <div class="es-t">Desk research</div>
+              <div class="es-d">Соберите в одном месте конкурентов, аналитику и инсайты.</div>
+            </div>
+          </button>
+          <button class="es-item" onclick="armSkill('synth')">
+            <div class="es-ico">🗂</div>
+            <div>
+              <div class="es-t">Synthesis / Affinity</div>
+              <div class="es-d">Структурируйте результаты интервью, опросов и аналитики.</div>
+            </div>
+          </button>
+        </div>
+      </div>
+    `;
+  }
+
+  function openChat(id) {
+    const c = state.chats.find(x => x.id === id);
+    if (!c) return;
+    state.currentChat = c;
+    goView('private');
+    renderThread();
+    renderSidebarChats();
+    setTitle(c.title);
+  }
+
+  function newChatIfNeeded() {
+    if (!state.currentChat) {
+      const id = uid();
+      state.currentChat = {
+        id,
+        title: "Без названия",
+        messages: []
+      };
+      state.chats.unshift(state.currentChat);
+    }
+    renderSidebarChats();
+  }
+
+  function renderThread() {
+    const host = document.getElementById('threadHost');
+    const c = state.currentChat;
+    if (!c || !c.messages.length) {
+      renderEmptyThread();
+      return;
+    }
+    host.innerHTML = `
+      <div class="thread">
+        ${c.messages.map(m => renderMsg(m)).join('')}
+      </div>
+    `;
+    scrollBottom();
+  }
+
+  function renderMsg(m) {
+    if (m.role === "user") {
+      const t = m.taskId ? state.tasks.find(s => s.id === m.taskId) : null;
+      const tag = t ? `
+        <div class="skill-tag">${t.ico} ${escapeHtml(t.name)}</div>
+      ` : "";
+      return `
+        <div class="msg user">
+          <div class="msg-body">
+            ${tag}
+            <div class="bubble">${escapeHtml(m.text)}</div>
+          </div>
+          <div class="msg-ava me">ME</div>
+        </div>
+      `;
+    }
+    if (m.role === "thinking") {
+      return `
+        <div class="msg">
+          <div class="msg-ava ai">AI</div>
+          <div class="msg-body">
+            <div class="bubble">
+              <div class="typing"><span></span><span></span><span></span></div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    if (m.type === "artifact") {
+      const t = state.tasks.find(s => s.id === m.taskId);
+      return `
+        <div class="msg">
+          <div class="msg-ava ai">AI</div>
+          <div class="msg-body">
+            <div class="art">
+              <div class="art-head">
+                <div class="art-ico">${t ? t.ico : "📄"}</div>
+                <div class="art-h-meta">
+                  <div class="art-h-title">${escapeHtml(m.title)}</div>
+                  <div class="art-h-sub">${t ? escapeHtml(t.name) : "Task result"}</div>
+                </div>
+                <div class="art-h-actions">
+                  <button class="icon-btn" title="Прикрепить к проекту" onclick="attachToProject('${m.id}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <path d="M7 10l5 5 5-5M12 15V3" />
+                    </svg>
+                  </button>
+                  <button class="icon-btn" title="Поделиться в командном space" onclick="shareToTeam('${m.id}')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                      <path d="M18 8a3 3 0 1 0-3-3" />
+                      <path d="M6 8a3 3 0 1 1 3-3" />
+                      <path d="M6 16a3 3 0 1 0 3 3" />
+                      <path d="M18 16a3 3 0 1 1-3 3" />
+                      <path d="M8.6 7.15 15.4 4.85" />
+                      <path d="M8.6 16.85l6.8 2.3" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="art-content">
+                <div class="doc">${m.html}</div>
+              </div>
+              <div class="art-foot">
+                <span class="chip">private · пока не расшарено</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div class="msg">
+        <div class="msg-ava ai">AI</div>
+        <div class="msg-body">
+          <div class="bubble ai-text">${m.html}</div>
+        </div>
+      </div>
+    `;
+  }
+
+  function armSkill(id) {
+    const t = state.tasks.find(x => x.id === id);
+    if (!t) return;
+    state.armedTask = id;
+    document.getElementById('armed').classList.add('show');
+    document.getElementById('armedName').textContent = t.name;
+    document.getElementById('armedIco').textContent = t.ico;
+    goView('private');
+    const inp = document.getElementById('input');
+    if (!inp.value.trim()) {
+      inp.placeholder = `Опишите контекст для задачи «${t.name}»…`;
+    }
+    inp.focus();
+    toggleSend();
+  }
+
+  function disarmSkill() {
+    state.armedTask = null;
+    document.getElementById('armed').classList.remove('show');
+    const inp = document.getElementById('input');
+    inp.placeholder = "Опишите задачу и контекст продукта…";
+    toggleSend();
+  }
+
+  function toggleSend() {
+    const inp = document.getElementById('input');
+    const has = inp.value.trim().length > 0 && !!state.armedTask;
+    const btn = document.getElementById('sendBtn');
+    if (has) {
+      btn.classList.remove('disabled');
+    } else {
+      btn.classList.add('disabled');
+    }
+  }
+
+  function onKey(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  }
+
+  function send() {
+    const inp = document.getElementById('input');
+    const text = inp.value.trim();
+    const taskId = state.armedTask;
+    if (!text || !taskId) return;
+
+    newChatIfNeeded();
+    const c = state.currentChat;
+    const userMsg = { role: "user", text, taskId };
+    c.messages.push(userMsg);
+    renderThread();
+
+    inp.value = "";
+    autoGrow(inp);
+    toggleSend();
+
+    const t = state.tasks.find(s => s.id === taskId);
+    if (!c.title || c.title === "Без названия") {
+      c.title = t ? t.name : "Личный чат";
+      setTitle(c.title);
+    }
+    disarmSkill();
+    renderSidebarChats();
+
+    c.messages.push({ role: "thinking" });
+    renderThread();
+
+    setTimeout(() => {
+      c.messages.pop();
+      const artId = uid();
+      const html = demoDoc(taskId, text);
+      const title = deriveTitle(taskId, text);
+      const artMsg = {
+        role: "assistant",
+        type: "artifact",
+        id: artId,
+        taskId,
+        title,
+        html
+      };
+      c.messages.push(artMsg);
+      renderThread();
+      state.recentArtifacts.unshift({
+        id: artId,
+        title,
+        taskId,
+        skillName: t ? t.name : "",
+        status: "draft",
+        projectName: null
+      });
+      renderDashboard();
+    }, 900);
+  }
+
+  function demoDoc(taskId, brief) {
+    const b = escapeHtml(brief || "").slice(0, 160);
+    if (taskId === "gtm") {
+      return `
+        <p><b>Краткий контекст:</b> ${b}</p>
+        <h2><span class="n">01</span> ICP и сегменты</h2>
+        <p class="editable" contenteditable="true">Опишите 2–3 целевых сегмента: отрасль, размер, должности, ключевые боли.</p>
+        <h2><span class="n">02</span> Сообщения и value prop</h2>
+        <ul>
+          <li class="editable" contenteditable="true">Главное сообщение · один тезис, который останется в голове.</li>
+          <li class="editable" contenteditable="true">Supporting messages · 2–3 тезиса под разные роли.</li>
+        </ul>
+        <h2><span class="n">03</span> Каналы и эксперименты</h2>
+        <div class="tbl">
+          <table>
+            <tr><th>Канал</th><th>Гипотеза</th><th>MVP‑эксперимент</th><th>Метрика успеха</th></tr>
+            <tr>
+              <td>Paid / Performance</td>
+              <td class="editable" contenteditable="true">...</td>
+              <td class="editable" contenteditable="true">...</td>
+              <td class="editable" contenteditable="true">CAC, sign‑ups, payback</td>
+            </tr>
+          </table>
+        </div>
+        <div class="box"><b>Next steps:</b> выберите 3–4 эксперимента из таблицы и запланируйте даты запусков.</div>
+      `;
+    }
+    if (taskId === "prd") {
+      return `
+        <p><b>Краткий контекст:</b> ${b}</p>
+        <h2><span class="n">01</span> Problem & goals</h2>
+        <p class="editable" contenteditable="true">Опишите бизнес‑проблему и 2–3 измеримые цели релиза.</p>
+        <h2><span class="n">02</span> User stories</h2>
+        <ul>
+          <li class="editable" contenteditable="true">Как [роль] я хочу [действие], чтобы [ценность].</li>
+          <li class="editable" contenteditable="true">...</li>
+        </ul>
+        <h2><span class="n">03</span> Scope / out of scope</h2>
+        <div class="tbl">
+          <table>
+            <tr><th>In scope</th><th>Out of scope</th></tr>
+            <tr>
+              <td class="editable" contenteditable="true">...</td>
+              <td class="editable" contenteditable="true">...</td>
+            </tr>
+          </table>
+        </div>
+      `;
+    }
+    return `
+      <p><b>Краткий контекст:</b> ${b}</p>
+      <p class="editable" contenteditable="true">Здесь появится структурированная заготовка под выбранную задачу.</p>
+    `;
+  }
+
+  function deriveTitle(taskId, brief) {
+    const t = state.tasks.find(s => s.id === taskId);
+    const short = (brief || "").trim();
+    if (short && short.length < 64) return short;
+    return t ? t.name : "Артефакт";
+  }
+
+  function attachToProject(id) {
+    alert("В проде: открыть модал выбора проекта и зафиксировать артефакт в его списке.");
+  }
+
+  function shareToTeam(id) {
+    alert("В проде: пометить артефакт как shared и показать в Team Space.");
+  }
+
+  function openArtifactFromFeed(id) {
+    alert("В проде: открыть детальный просмотр артефакта.");
+  }
+
+  function uid() {
+    return Math.random().toString(36).slice(2,9);
+  }
+
+  function escapeHtml(s) {
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function autoGrow(el) {
+    el.style.height = "auto";
+    el.style.height = Math.min(el.scrollHeight, 160) + "px";
+  }
+
+  function scrollBottom() {
+    const w = document.getElementById('threadWrap');
+    requestAnimationFrame(() => {
+      w.scrollTop = w.scrollHeight;
+    });
+  }
+
+  function setTitle(txt) {
+    const el = document.getElementById('tbTitle');
+    el.innerHTML = `<span class="dim">${escapeHtml(txt || "Home")}</span>`;
+  }
+
+  function goView(v) {
+    document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+    document.getElementById('view-' + v).classList.add('active');
+
+    document.querySelectorAll('.sb-link').forEach(x => x.classList.remove('active'));
+    if (v === "dashboard") document.getElementById('nav-dashboard').classList.add('active');
+    if (v === "tasks") document.getElementById('nav-tasks').classList.add('active');
+    if (v === "artifacts") document.getElementById('nav-artifacts').classList.add('active');
+    if (v === "private") document.getElementById('nav-private').classList.add('active');
+
+    if (v === "dashboard") {
+      setTitle("Home · Product Space");
+    } else if (v === "tasks") {
+      setTitle("Библиотека задач");
+      renderTaskLibrary();
+    } else if (v === "artifacts") {
+      setTitle("Артефакты");
+      renderArtifactsView();
+    } else if (v === "private") {
+      setTitle(state.currentChat ? state.currentChat.title : "Личный workspace");
+      if (!state.currentChat || !state.currentChat.messages.length) renderEmptyThread();
+    }
+    toggleSidebar(false);
+  }
+
+  function openTaskLibrary() {
+    goView('tasks');
+  }
+
+  function openTaskLibraryFromComposer() {
+    goView('tasks');
+  }
+
+  function openTaskLibraryForProject(id) {
+    goView('tasks');
+  }
+
+  function openNewProject() {
+    alert("В проде: модал создания проекта.");
+  }
+
+  function openProfile() {
+    alert("В проде: модал редактирования product‑контекста.");
+  }
+
+  function toggleSidebar(open) {
+    const sb = document.getElementById('sidebar');
+    const sc = document.getElementById('scrim');
+    if (open) {
+      sb.classList.add('open');
+      sc.classList.add('show');
+    } else {
+      sb.classList.remove('open');
+      sc.classList.remove('show');
+    }
+  }
+
+  initProfile();
+  renderSidebarProjects();
+  renderSidebarChats();
+  renderDashboard();
+  renderTaskLibrary();
+  renderEmptyThread();
+</script>
+
+</body>
+</html>
