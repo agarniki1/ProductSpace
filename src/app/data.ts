@@ -20,42 +20,56 @@ export const CATS: { id: string; label: string }[] = [
   { id: 'build', label: 'Build' },
 ];
 
+export const CAT_COLORS: Record<string, { bg: string; color: string; dot: string }> = {
+  pm: { bg: '#EDE9FE', color: '#7C3AED', dot: '#7C3AED' },
+  pmm: { bg: '#FEF3C7', color: '#D97706', dot: '#F59E0B' },
+  res: { bg: '#DBEAFE', color: '#2563EB', dot: '#3B82F6' },
+  data: { bg: '#DCFCE7', color: '#16A34A', dot: '#22C55E' },
+  dev: { bg: '#FEE2E2', color: '#DC2626', dot: '#EF4444' },
+  build: { bg: '#F3E8FF', color: '#9333EA', dot: '#A855F7' },
+};
+
 export const ALL_TASKS: Task[] = [
   // PM
-  { id: 'prd', cat: 'pm', kind: 'doc', ico: 'prd', name: 'PRD / Спецификация', desc: 'Структурированное описание фичи: цели, user stories, скоуп.' },
-  { id: 'jtbd', cat: 'pm', kind: 'doc', ico: 'jtbd', name: 'JTBD-карта', desc: 'Functional / emotional / social jobs для целевого сегмента.' },
-  { id: 'roadmap', cat: 'pm', kind: 'doc', ico: 'roadmap', name: 'Roadmap / Приоритизация', desc: 'Now–Next–Later и RICE-оценка по фичам.' },
-  { id: 'brief', cat: 'pm', kind: 'doc', ico: 'brief', name: 'Product Brief', desc: 'Краткий обзор продуктовой гипотезы и следующих шагов.' },
-  { id: 'retro', cat: 'pm', kind: 'doc', ico: 'retro', name: 'Ретроспектива', desc: 'Структурированный разбор итогов спринта или квартала.' },
-  { id: 'hypothesis', cat: 'pm', kind: 'doc', ico: 'hypothesis', name: 'Гипотеза / Проблема', desc: 'Формулировка и оценка продуктовой гипотезы с критериями проверки.' },
+  { id: 'prd', cat: 'pm', kind: 'doc', ico: 'prd', name: 'PRD / Спецификация', desc: 'Структурированное описание фичи: цели, user stories, скоуп.', entity: 'skill' },
+  { id: 'jtbd', cat: 'pm', kind: 'doc', ico: 'jtbd', name: 'JTBD-карта', desc: 'Functional / emotional / social jobs для целевого сегмента.', entity: 'skill' },
+  { id: 'roadmap', cat: 'pm', kind: 'doc', ico: 'roadmap', name: 'Roadmap / Приоритизация', desc: 'Now–Next–Later и RICE-оценка по фичам.', entity: 'skill' },
+  { id: 'brief', cat: 'pm', kind: 'doc', ico: 'brief', name: 'Product Brief', desc: 'Краткий обзор продуктовой гипотезы и следующих шагов.', entity: 'prompt' },
+  { id: 'retro', cat: 'pm', kind: 'doc', ico: 'retro', name: 'Ретроспектива', desc: 'Структурированный разбор итогов спринта или квартала.', entity: 'prompt' },
+  { id: 'hypothesis', cat: 'pm', kind: 'doc', ico: 'hypothesis', name: 'Гипотеза / Проблема', desc: 'Формулировка и оценка продуктовой гипотезы с критериями проверки.', entity: 'skill' },
+
   // PMM
-  { id: 'gtm', cat: 'pmm', kind: 'doc', ico: 'gtm', name: 'GTM-стратегия', desc: 'Каналы, сообщения, приоритеты запусков и KPI по GTM.' },
-  { id: 'copy', cat: 'pmm', kind: 'doc', ico: 'copy', name: 'Копирайтинг и месседжи', desc: 'Hero, value prop и ключевые сообщения для лендинга.' },
-  { id: 'competitive', cat: 'pmm', kind: 'doc', ico: 'competitive', name: 'Конкурентный анализ', desc: 'Сравнение по функциям, ценам и позиционированию.' },
-  { id: 'positioning', cat: 'pmm', kind: 'doc', ico: 'positioning', name: 'Позиционирование', desc: 'Positioning statement и messaging house для продукта.' },
+  { id: 'gtm', cat: 'pmm', kind: 'doc', ico: 'gtm', name: 'GTM-стратегия', desc: 'Каналы, сообщения, приоритеты запусков и KPI по GTM.', entity: 'skill' },
+  { id: 'copy', cat: 'pmm', kind: 'doc', ico: 'copy', name: 'Копирайтинг и месседжи', desc: 'Hero, value prop и ключевые сообщения для лендинга.', entity: 'prompt' },
+  { id: 'competitive', cat: 'pmm', kind: 'doc', ico: 'competitive', name: 'Конкурентный анализ', desc: 'Сравнение по функциям, ценам и позиционированию.', entity: 'skill' },
+  { id: 'positioning', cat: 'pmm', kind: 'doc', ico: 'positioning', name: 'Позиционирование', desc: 'Positioning statement и messaging house для продукта.', entity: 'prompt' },
+
   // Research
-  { id: 'desk', cat: 'res', kind: 'doc', ico: 'desk', name: 'Desk Research', desc: 'Сбор и синтез вторичных источников по рынку и конкурентам.' },
-  { id: 'synth', cat: 'res', kind: 'doc', ico: 'synth', name: 'Synthesis / Affinity', desc: 'Сгруппированные инсайты после интервью или опросов.' },
-  { id: 'persona', cat: 'res', kind: 'doc', ico: 'persona', name: 'User Persona', desc: 'Детальный портрет целевого пользователя с болями и целями.' },
-  { id: 'custdev', cat: 'res', kind: 'doc', ico: 'custdev', name: 'Customer Discovery', desc: 'Гайд для проведения глубинных интервью с пользователями.' },
-  { id: 'survey', cat: 'res', kind: 'doc', ico: 'survey', name: 'Survey / Опрос', desc: 'Структура и вопросы для количественного исследования.' },
+  { id: 'desk', cat: 'res', kind: 'doc', ico: 'desk', name: 'Desk Research', desc: 'Сбор и синтез вторичных источников по рынку и конкурентам.', entity: 'prompt' },
+  { id: 'synth', cat: 'res', kind: 'doc', ico: 'synth', name: 'Synthesis / Affinity', desc: 'Сгруппированные инсайты после интервью или опросов.', entity: 'prompt' },
+  { id: 'persona', cat: 'res', kind: 'doc', ico: 'persona', name: 'User Persona', desc: 'Детальный портрет целевого пользователя с болями и целями.', entity: 'skill' },
+  { id: 'custdev', cat: 'res', kind: 'doc', ico: 'custdev', name: 'Customer Discovery', desc: 'Гайд для проведения глубинных интервью с пользователями.', entity: 'skill' },
+  { id: 'survey', cat: 'res', kind: 'doc', ico: 'survey', name: 'Survey / Опрос', desc: 'Структура и вопросы для количественного исследования.', entity: 'prompt' },
+
   // Data
-  { id: 'metrics', cat: 'data', kind: 'doc', ico: 'metrics', name: 'Metrics / Tracking Plan', desc: 'Ключевые метрики, события и схема трекинга.' },
-  { id: 'abtest', cat: 'data', kind: 'doc', ico: 'abtest', name: 'A/B тест', desc: 'Дизайн эксперимента, гипотеза, минимальный эффект, длительность.' },
-  { id: 'cohort', cat: 'data', kind: 'doc', ico: 'cohort', name: 'Когортный анализ', desc: 'Сравнение поведения групп пользователей по времени регистрации.' },
-  { id: 'funnel', cat: 'data', kind: 'doc', ico: 'funnel', name: 'Воронка / Funnel', desc: 'Анализ конверсии по этапам пользовательского пути.' },
-  { id: 'sql', cat: 'data', kind: 'doc', ico: 'sql', name: 'SQL-запрос', desc: 'Аналитический запрос для выгрузки данных из БД.' },
+  { id: 'metrics', cat: 'data', kind: 'doc', ico: 'metrics', name: 'Metrics / Tracking Plan', desc: 'Ключевые метрики, события и схема трекинга.', entity: 'skill' },
+  { id: 'abtest', cat: 'data', kind: 'doc', ico: 'abtest', name: 'A/B тест', desc: 'Дизайн эксперимента, гипотеза, минимальный эффект, длительность.', entity: 'skill' },
+  { id: 'cohort', cat: 'data', kind: 'doc', ico: 'cohort', name: 'Когортный анализ', desc: 'Сравнение поведения групп пользователей по времени регистрации.', entity: 'prompt' },
+  { id: 'funnel', cat: 'data', kind: 'doc', ico: 'funnel', name: 'Воронка / Funnel', desc: 'Анализ конверсии по этапам пользовательского пути.', entity: 'prompt' },
+  { id: 'sql', cat: 'data', kind: 'doc', ico: 'sql', name: 'SQL-запрос', desc: 'Аналитический запрос для выгрузки данных из БД.', entity: 'skill' },
+
   // Dev
-  { id: 'techspec', cat: 'dev', kind: 'doc', ico: 'techspec', name: 'Tech Spec', desc: 'Техническое задание: архитектура, апи, зависимости, риски.' },
-  { id: 'apispec', cat: 'dev', kind: 'doc', ico: 'apispec', name: 'API Spec', desc: 'Описание эндпоинтов, параметров и ответов в формате OpenAPI.' },
-  { id: 'codereview', cat: 'dev', kind: 'doc', ico: 'codereview', name: 'Code Review', desc: 'Структурированный чеклист для ревью кода: безопасность, качество.' },
-  { id: 'bug', cat: 'dev', kind: 'doc', ico: 'bug', name: 'Bug Report', desc: 'Детальный баг-репорт: шаги, ожидаемое/фактическое, окружение.' },
-  { id: 'tests', cat: 'dev', kind: 'doc', ico: 'tests', name: 'Test Cases', desc: 'Сценарии тестирования: позитивные, негативные, edge cases.' },
+  { id: 'techspec', cat: 'dev', kind: 'doc', ico: 'techspec', name: 'Tech Spec', desc: 'Техническое задание: архитектура, апи, зависимости, риски.', entity: 'skill' },
+  { id: 'apispec', cat: 'dev', kind: 'doc', ico: 'apispec', name: 'API Spec', desc: 'Описание эндпоинтов, параметров и ответов в формате OpenAPI.', entity: 'prompt' },
+  { id: 'codereview', cat: 'dev', kind: 'doc', ico: 'codereview', name: 'Code Review', desc: 'Структурированный чеклист для ревью кода: безопасность, качество.', entity: 'prompt' },
+  { id: 'bug', cat: 'dev', kind: 'doc', ico: 'bug', name: 'Bug Report', desc: 'Детальный баг-репорт: шаги, ожидаемое/фактическое, окружение.', entity: 'prompt' },
+  { id: 'tests', cat: 'dev', kind: 'doc', ico: 'tests', name: 'Test Cases', desc: 'Сценарии тестирования: позитивные, негативные, edge cases.', entity: 'prompt' },
+
   // Build (prototypes)
-  { id: 'proto-mobile', cat: 'build', kind: 'proto', ico: 'proto-mobile', name: 'Mobile App Screen', desc: 'Живой интерактивный прототип мобильного экрана.' },
-  { id: 'proto-web', cat: 'build', kind: 'proto', ico: 'proto-web', name: 'Web Component', desc: 'HTML/CSS компонент с интерактивными состояниями.' },
-  { id: 'proto-landing', cat: 'build', kind: 'proto', ico: 'proto-landing', name: 'Landing Page', desc: 'Превью лендинга с hero, фичами и CTA.' },
-  { id: 'proto-visual', cat: 'build', kind: 'proto', ico: 'proto-visual', name: 'Visual Asset', desc: 'Карточка или баннер для маркетинга и коммуникаций.' },
+  { id: 'proto-mobile', cat: 'build', kind: 'proto', ico: 'proto-mobile', name: 'Mobile App Screen', desc: 'Живой интерактивный прототип мобильного экрана.', entity: 'skill' },
+  { id: 'proto-web', cat: 'build', kind: 'proto', ico: 'proto-web', name: 'Web Component', desc: 'HTML/CSS компонент с интерактивными состояниями.', entity: 'skill' },
+  { id: 'proto-landing', cat: 'build', kind: 'proto', ico: 'proto-landing', name: 'Landing Page', desc: 'Превью лендинга с hero, фичами и CTA.', entity: 'skill' },
+  { id: 'proto-visual', cat: 'build', kind: 'proto', ico: 'proto-visual', name: 'Visual Asset', desc: 'Карточка или баннер для маркетинга и коммуникаций.', entity: 'skill' },
 ];
 
 export const HERO_TASKS = ['prd', 'gtm', 'metrics', 'proto-mobile', 'jtbd', 'competitive'];

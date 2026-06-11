@@ -3,6 +3,12 @@ export type View = 'dashboard' | 'tasks' | 'project' | 'chat' | 'artifacts' | 't
 export type TaskCat = 'pm' | 'pmm' | 'res' | 'data' | 'dev' | 'build';
 export type TaskKind = 'doc' | 'proto';
 
+// Фаза 1: аддитивная подготовка к модели «Навык / Промт».
+// Навык — устойчивый сценарий с предсказуемой структурой артефакта.
+// Промт — более лёгкая заготовка / свободный запуск.
+// Поле необязательное, существующий код продолжает работать с Task как раньше.
+export type TaskEntity = 'skill' | 'prompt';
+
 export interface Task {
   id: string;
   cat: TaskCat;
@@ -10,6 +16,7 @@ export interface Task {
   ico: string;
   name: string;
   desc: string;
+  entity?: TaskEntity;
 }
 
 export interface ProjectMember {
