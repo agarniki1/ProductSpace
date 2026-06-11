@@ -1,6 +1,16 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import { View, AppState, Chat, Message, Toast, Profile, Artifact } from './types';
-import { INITIAL_PROJECTS, ALL_TASKS, HERO_TASKS, DEFAULT_PROFILE, uid, demoDoc, deriveTitle, freeReply, buildSeedData } from './data';
+import {
+  INITIAL_PROJECTS,
+  ALL_TASKS,
+  HERO_TASKS,
+  DEFAULT_PROFILE,
+  uid,
+  demoDoc,
+  deriveTitle,
+  freeReply,
+  buildSeedData,
+} from './data';
 import { Sidebar } from './components/Sidebar';
 import { Dashboard } from './components/Dashboard';
 import { TaskLibrary } from './components/TaskLibrary';
@@ -9,7 +19,6 @@ import { ArtifactsView } from './components/ArtifactsView';
 import { PrivateWorkspace } from './components/PrivateWorkspace';
 import { ArtifactStyles } from './components/ArtifactStyles';
 
-// Build initial seed data
 function buildInitialState(): AppState {
   const { chats: chats1, artifacts: arts1 } = buildSeedData('rev-card', 'Debit card DACH', [
     { taskId: 'gtm', brief: 'GTM-стратегия для запуска дебетовой карты в Германии', author: 'Алексей Романов', initials: 'AR', color: '#FF631F', daysAgo: 5 },
@@ -96,11 +105,38 @@ export default function App() {
   const disarm = useCallback(() => update({ armedTaskId: null, armedTaskIds: [] }), []);
 
   const openChat = useCallback((id: string) => {
-    update({ currentChatId: id, currentView: 'chat', sidebarOpen: false });
+    setState(prev => {
+      const chat = prev.chats.find(c => c.id === id) || null;
+      return {
+        ...prev,
+        currentChatId: id,
+        currentProjectId: chat?.projectId || null,
+        currentView: 'chat',
+        sidebarOpen: false,
+      };
+    });
   }, []);
 
   const newChat = useCallback(() => {
-    update({ currentChatId: null, currentView: 'chat', armedTaskId: null, armedTaskIds: [], sidebarOpen: false });
+    update({
+      currentChatId: null,
+      currentProjectId: null,
+      currentView: 'chat',
+      armedTaskId: null,
+      armedTaskIds: [],
+      sidebarOpen: false,
+    });
+  }, []);
+
+  const newChatInProject = useCallback((projectId: string) => {
+    update({
+      currentProjectId: projectId,
+      currentChatId: null,
+      currentView: 'chat',
+      armedTaskId: null,
+      armedTaskIds: [],
+      sidebarOpen: false,
+    });
   }, []);
 
   const newProject = useCallback(() => update({ overlay: 'newProject' }), []);
@@ -117,7 +153,10 @@ export default function App() {
       let chats = [...prev.chats];
       const firstTask = taskIds.length > 0 ? prev.tasks.find(t => t.id === taskIds[0]) : null;
       const chatTitle = taskIds.length > 1
-        ? taskIds.map(id => prev.tasks.find(t => t.id === id)?.name?.split('/')[0].trim()).filter(Boolean).join(' + ')
+        ? taskIds
+            .map(id => prev.tasks.find(t => t.id === id)?.name?.split('/')[0].trim())
+            .filter(Boolean)
+            .join(' + ')
         : (firstTask?.name || text.slice(0, 42));
 
       if (!chatId || !chats.find(c => c.id === chatId)) {
@@ -125,7 +164,7 @@ export default function App() {
           id: uid(),
           title: chatTitle,
           ico: firstTask?.ico || 'prd',
-          projectId: null,
+          projectId: prev.currentProjectId,
           when: 'Сегодня',
           messages: [],
         };
@@ -139,7 +178,13 @@ export default function App() {
       chat.messages.push({ id: uid(), role: 'thinking' });
       chats[chatIdx] = chat;
 
-      return { ...prev, chats, currentChatId: chatId, armedTaskId: null, armedTaskIds: [] };
+      return {
+        ...prev,
+        chats,
+        currentChatId: chatId,
+        armedTaskId: null,
+        armedTaskIds: [],
+      };
     });
 
     const delay = taskIds.length > 0 ? 1100 : 700;
@@ -162,7 +207,14 @@ export default function App() {
             const artId = uid();
             const title = deriveTitle(taskId, text, prev.tasks);
             const html = demoDoc(taskId, text);
-            const artMsg: Message = { id: artId, role: 'assistant', type: 'artifact', taskId, title, docHtml: html };
+            const artMsg: Message = {
+              id: artId,
+              role: 'assistant',
+              type: 'artifact',
+              taskId,
+              title,
+              docHtml: html,
+            };
             chat.messages.push(artMsg);
             newArtifacts.push({
               id: artId,
@@ -170,8 +222,8 @@ export default function App() {
               taskId,
               skillName: prev.tasks.find(t => t.id === taskId)?.name || '',
               status: 'draft',
-              projectName: null,
-              projectId: null,
+              projectName: prev.projects.find(p => p.id === prev.currentProjectId)?.name || null,
+              projectId: prev.currentProjectId,
               author: prev.profile.name,
               initials: prev.profile.initials,
               when: 'Сегодня',
@@ -219,7 +271,6 @@ export default function App() {
     showToast('Поделились с командой', 'success');
   }, [showToast]);
 
-  // Overlay close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closeOverlay();
@@ -249,13 +300,15 @@ export default function App() {
     <>
       <ArtifactStyles />
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'var(--sb-width) 1fr',
-        height: '100vh',
-        background: 'var(--bg-soft)',
-        overflow: 'hidden',
-      }}>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: 'var(--sb-width) 1fr',
+          height: '100vh',
+          background: 'var(--bg-soft)',
+          overflow: 'hidden',
+        }}
+      >
         <Sidebar
           currentView={state.currentView}
           currentProjectId={state.currentProjectId}
@@ -272,25 +325,27 @@ export default function App() {
           onEditProfile={editProfile}
         />
 
-        <main style={{
-          display: 'flex',
-          flexDirection: 'column',
-          height: '100vh',
-          overflow: 'hidden',
-          position: 'relative',
-          background: 'var(--bg-soft)',
-        }}>
-          {/* Topbar */}
-          <TopBar state={state} onArmTask={armTask} />
-
-          {/* Content */}
-          <div style={{
-            flex: 1,
-            overflow: state.currentView === 'chat' ? 'hidden' : 'auto',
-            position: 'relative',
+        <main
+          style={{
             display: 'flex',
             flexDirection: 'column',
-          }}>
+            height: '100vh',
+            overflow: 'hidden',
+            position: 'relative',
+            background: 'var(--bg-soft)',
+          }}
+        >
+          <TopBar state={state} />
+
+          <div
+            style={{
+              flex: 1,
+              overflow: state.currentView === 'chat' ? 'hidden' : 'auto',
+              position: 'relative',
+              display: 'flex',
+              flexDirection: 'column',
+            }}
+          >
             {state.currentView === 'dashboard' && (
               <Dashboard
                 projects={state.projects}
@@ -304,6 +359,7 @@ export default function App() {
                 onAllArtifacts={() => goView('artifacts')}
                 onNewProject={newProject}
                 onOpenChat={openChat}
+                onOpenProfile={editProfile}
               />
             )}
 
@@ -322,11 +378,9 @@ export default function App() {
                 tasks={state.tasks}
                 chats={state.chats}
                 onBack={() => goView('dashboard')}
-                onNewTask={() => goView('tasks')}
+                onNewTask={() => newChatInProject(currentProject.id)}
                 onOpenChat={openChat}
-                onNewChatInProject={() => {
-                  update({ currentChatId: null, currentView: 'chat', armedTaskId: null, armedTaskIds: [] });
-                }}
+                onNewChatInProject={() => newChatInProject(currentProject.id)}
               />
             )}
 
@@ -344,6 +398,7 @@ export default function App() {
                 chat={currentChat}
                 tasks={state.tasks}
                 projects={state.projects}
+                currentProjectId={state.currentProjectId}
                 armedTaskIds={state.armedTaskIds}
                 heroTaskIds={HERO_TASKS}
                 onSend={sendMessage}
@@ -360,32 +415,70 @@ export default function App() {
         </main>
       </div>
 
-      {/* Toasts */}
-      <div style={{ position: 'fixed', bottom: 24, right: 24, display: 'flex', flexDirection: 'column', gap: 8, zIndex: 9999, pointerEvents: 'none' }}>
+      <div
+        style={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 8,
+          zIndex: 9999,
+          pointerEvents: 'none',
+        }}
+      >
         {state.toasts.map(t => (
-          <div key={t.id} style={{
-            background: 'var(--ink)', color: '#fff', padding: '11px 18px',
-            borderRadius: 12, fontSize: 13, fontWeight: 500,
-            boxShadow: '0 8px 32px rgba(0,0,0,.22)',
-            animation: 'rise .2s ease',
-            display: 'flex', alignItems: 'center', gap: 9,
-            border: '1px solid rgba(255,255,255,.08)',
-          }}>
-            <div style={{ width: 18, height: 18, borderRadius: '50%', background: t.kind === 'success' ? 'var(--green)' : 'var(--ai)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, flexShrink: 0 }}>
+          <div
+            key={t.id}
+            style={{
+              background: 'rgba(28,29,32,0.94)',
+              color: '#fff',
+              padding: '10px 14px',
+              borderRadius: 14,
+              fontSize: 12.5,
+              fontWeight: 500,
+              boxShadow: '0 14px 38px rgba(20,24,34,.14)',
+              animation: 'rise .2s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              border: '1px solid rgba(255,255,255,.06)',
+            }}
+          >
+            <div
+              style={{
+                width: 16,
+                height: 16,
+                borderRadius: '50%',
+                background: t.kind === 'success' ? 'var(--green)' : 'var(--ai)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: 9,
+                flexShrink: 0,
+                color: '#fff',
+              }}
+            >
               {t.kind === 'success' ? '✓' : 'i'}
             </div>
-            {t.text}
+            <span>{t.text}</span>
           </div>
         ))}
       </div>
 
-      {/* Overlay: New Project */}
       {state.overlay === 'newProject' && (
         <Modal onClose={closeOverlay} title="Новый проект">
           <NewProjectForm
             onSave={(name, product, goal) => {
               const p = {
-                id: uid(), name, product, status: 'planning' as const, goal, progress: 0, members: [state.profile.initials], chats: 0,
+                id: uid(),
+                name,
+                product,
+                status: 'planning' as const,
+                goal,
+                progress: 0,
+                members: [state.profile.initials],
+                chats: 0,
               };
               setState(prev => ({ ...prev, projects: [...prev.projects, p], overlay: null }));
               showToast('Проект создан');
@@ -395,166 +488,582 @@ export default function App() {
         </Modal>
       )}
 
-      {/* Overlay: Profile */}
       {state.overlay === 'profile' && (
-        <Modal onClose={closeOverlay} title="Профиль">
-          <ProfileForm
+        <Modal onClose={closeOverlay} title="Company Brief">
+          <CompanyBriefForm
             profile={state.profile}
             onSave={(prof) => {
-              setState(prev => ({ ...prev, profile: prof, overlay: null }));
-              showToast('Профиль обновлён');
+              setState(prev => ({
+                ...prev,
+                profile: {
+                  ...prev.profile,
+                  ...prof,
+                },
+                overlay: null,
+              }));
+              showToast('Бриф компании обновлён');
             }}
             onCancel={closeOverlay}
           />
         </Modal>
       )}
 
-      {/* Overlay: Artifact expand */}
       {state.overlay === 'artifactExpand' && expandedArtHtml && (
         <Modal onClose={closeOverlay} title={expandedArtTitle || 'Артефакт'} wide>
-          <div className="doc" style={{ padding: '4px 0 16px' }} dangerouslySetInnerHTML={{ __html: expandedArtHtml }} />
+          <div
+            style={{
+              width: '100%',
+              maxWidth: 760,
+              margin: '0 auto',
+            }}
+          >
+            <div
+              className="doc"
+              style={{ padding: '2px 0 8px' }}
+              dangerouslySetInnerHTML={{ __html: expandedArtHtml }}
+            />
+          </div>
         </Modal>
       )}
     </>
   );
 }
 
-// --- Topbar ---
-function TopBar({ state, onArmTask }: { state: AppState; onArmTask: (id: string) => void }) {
-  const { currentView, currentProjectId, currentChatId, projects, chats, profile } = state;
+function TopBar({ state }: { state: AppState }) {
+  const { currentView, currentProjectId, currentChatId, projects, chats } = state;
 
   let title: React.ReactNode;
-  if (currentView === 'dashboard') title = <><Dim>Главная</Dim> · Product Space</>;
-  else if (currentView === 'tasks') title = <>Библиотека задач</>;
-  else if (currentView === 'artifacts') title = <><Dim>Team Space</Dim> · Артефакты</>;
-  else if (currentView === 'chat') {
+  if (currentView === 'dashboard') {
+    title = <>Главная</>;
+  } else if (currentView === 'tasks') {
+    title = <>Библиотека</>;
+  } else if (currentView === 'artifacts') {
+    title = <>Артефакты</>;
+  } else if (currentView === 'chat') {
     const chat = chats.find(c => c.id === currentChatId);
-    title = <><Dim>{chat?.title || 'Новый чат'}</Dim></>;
+
+    if (!chat && currentProjectId) {
+      const p = projects.find(x => x.id === currentProjectId);
+      title = (
+        <>
+          <Dim>Проект</Dim>
+          <span style={{ color: 'rgba(20,24,34,0.22)' }}>·</span>
+          <span>{p?.name || 'Проект'}</span>
+          <span style={{ color: 'rgba(20,24,34,0.22)' }}>·</span>
+          <span>Новый чат</span>
+        </>
+      );
+    } else {
+      title = chat?.projectId ? (
+        <>
+          <Dim>Проект</Dim>
+          <span style={{ color: 'rgba(20,24,34,0.22)' }}>·</span>
+          <span>{projects.find(p => p.id === chat.projectId)?.name || 'Проект'}</span>
+          <span style={{ color: 'rgba(20,24,34,0.22)' }}>·</span>
+          <span>{chat?.title || 'Новый чат'}</span>
+        </>
+      ) : (
+        <>{chat?.title || 'Новый чат'}</>
+      );
+    }
   } else if (currentView === 'project') {
     const p = projects.find(x => x.id === currentProjectId);
-    title = <><Dim>Проект</Dim> · {p?.name}</>;
-  } else title = <>Product Space</>;
+    title = (
+      <>
+        <Dim>Проект</Dim>
+        <span style={{ color: 'rgba(20,24,34,0.22)' }}>·</span>
+        <span>{p?.name}</span>
+      </>
+    );
+  } else {
+    title = <>Главная</>;
+  }
 
   return (
-    <div style={{
-      height: 52,
-      display: 'flex', alignItems: 'center', gap: 12,
-      padding: '0 22px',
-      borderBottom: '1px solid var(--border)',
-      flexShrink: 0,
-      background: 'rgba(248,248,252,.94)',
-      backdropFilter: 'blur(12px)',
-      zIndex: 10,
-    }}>
-      <div style={{ fontSize: 13.5, fontWeight: 600, flex: 1, display: 'flex', alignItems: 'center', gap: 6 }}>
-        {title}
-      </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: 5,
-          fontSize: 11.5, padding: '4px 10px', borderRadius: 99,
-          border: '1px solid var(--border)', background: '#fff', color: 'var(--ink-2)',
-          boxShadow: 'var(--shadow-sm)',
-        }}>
-          <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--green)' }} />
-          {profile.company}
+    <div
+      style={{
+        height: 52,
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 22px',
+        borderBottom: '1px solid rgba(20,24,34,0.06)',
+        flexShrink: 0,
+        background: 'rgba(248,246,242,0.82)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        zIndex: 10,
+      }}
+    >
+      <div
+        style={{
+          minWidth: 0,
+          flex: 1,
+          display: 'flex',
+          alignItems: 'center',
+        }}
+      >
+        <div
+          style={{
+            fontSize: 13.5,
+            fontWeight: 600,
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            color: 'var(--ink)',
+            letterSpacing: '-.01em',
+            minWidth: 0,
+            whiteSpace: 'nowrap',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+          }}
+        >
+          {title}
         </div>
-        <div style={{
-          width: 28, height: 28, borderRadius: '50%',
-          background: profile.color, color: '#fff',
-          fontSize: 11, fontWeight: 700,
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 1px 4px rgba(0,0,0,.15)',
-        }}>{profile.initials}</div>
       </div>
     </div>
   );
 }
 
 function Dim({ children }: { children: React.ReactNode }) {
-  return <span style={{ color: 'var(--ink-3)', fontWeight: 500 }}>{children}</span>;
+  return (
+    <span
+      style={{
+        color: 'var(--ink-3)',
+        fontWeight: 500,
+      }}
+    >
+      {children}
+    </span>
+  );
 }
 
-// --- Modal ---
-function Modal({ onClose, title, children, wide }: { onClose: () => void; title: string; children: React.ReactNode; wide?: boolean }) {
+function CompanyBriefForm({
+  profile,
+  onSave,
+  onCancel,
+}: {
+  profile: Profile;
+  onSave: (p: Profile) => void;
+  onCancel: () => void;
+}) {
+  const extended = profile as Profile & {
+    bio?: string;
+    prompt?: string;
+    audience?: string;
+    markets?: string;
+    goals?: string;
+    products?: string;
+  };
+
+  const [form, setForm] = useState(() => ({
+    ...profile,
+    bio: extended.bio || '',
+    prompt: extended.prompt || '',
+    audience: extended.audience || 'Retail customers, freelancers, SME',
+    markets: extended.markets || 'UK, EEA, US, Australia, Japan, Singapore',
+    goals: extended.goals || 'Рост активации, spend, retention и cross-sell',
+    products: extended.products || 'Debit cards, onboarding, rewards, cashback, business spend',
+  }));
+
+  const setField =
+    (k: keyof typeof form) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+      setForm(prev => ({ ...prev, [k]: e.target.value }));
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '10px 12px',
+    border: '1px solid rgba(20,24,34,0.10)',
+    borderRadius: 12,
+    fontSize: 13,
+    outline: 'none',
+    boxSizing: 'border-box',
+    fontFamily: 'var(--font-ui)',
+    background: 'rgba(255,255,255,0.96)',
+    color: 'var(--ink)',
+  };
+
+  const textareaStyle: React.CSSProperties = {
+    ...inputStyle,
+    resize: 'vertical',
+    minHeight: 92,
+    lineHeight: 1.55,
+  };
+
+  const labelStyle: React.CSSProperties = {
+    fontSize: 12,
+    fontWeight: 600,
+    color: 'var(--ink-2)',
+    marginBottom: 6,
+    display: 'block',
+  };
+
+  const sectionStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 14,
+    padding: '14px',
+    borderRadius: 16,
+    border: '1px solid rgba(20,24,34,0.06)',
+    background: 'rgba(255,255,255,0.72)',
+  };
+
+  const helperStyle: React.CSSProperties = {
+    fontSize: 11.5,
+    color: 'var(--ink-3)',
+    lineHeight: 1.5,
+    marginTop: 5,
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 14,
+          padding: '2px 2px 6px',
+        }}
+      >
+        <div
+          style={{
+            width: 56,
+            height: 56,
+            borderRadius: '50%',
+            background: form.color,
+            color: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 20,
+            fontWeight: 700,
+            flexShrink: 0,
+          }}
+        >
+          {form.initials}
+        </div>
+
+        <div style={{ minWidth: 0 }}>
+          <div
+            style={{
+              fontSize: 15,
+              fontWeight: 700,
+              color: 'var(--ink)',
+              lineHeight: 1.2,
+            }}
+          >
+            {form.company || 'Компания не указана'}
+          </div>
+          <div
+            style={{
+              fontSize: 12,
+              color: 'var(--ink-3)',
+              marginTop: 4,
+              lineHeight: 1.45,
+            }}
+          >
+            Продуктовый контекст для AI: кто вы, для кого строите продукт и какие задачи решаете.
+          </div>
+        </div>
+      </div>
+
+      <div style={sectionStyle}>
+        <div>
+          <label style={labelStyle}>Компания</label>
+          <input
+            style={inputStyle}
+            value={form.company}
+            onChange={setField('company')}
+            placeholder="Например: Revolut"
+          />
+        </div>
+
+        <div>
+          <label style={labelStyle}>Владелец / роль</label>
+          <input
+            style={inputStyle}
+            value={form.role}
+            onChange={setField('role')}
+            placeholder="Например: Senior Product Manager"
+          />
+        </div>
+
+        <div>
+          <label style={labelStyle}>Короткий контекст компании</label>
+          <textarea
+            style={textareaStyle}
+            value={form.bio}
+            onChange={setField('bio')}
+            placeholder="Коротко опиши компанию, стадию, фокус, тип бизнеса и важный контекст, который AI должен помнить."
+          />
+        </div>
+      </div>
+
+      <div style={sectionStyle}>
+        <div>
+          <label style={labelStyle}>Целевая аудитория</label>
+          <textarea
+            style={textareaStyle}
+            value={form.audience}
+            onChange={setField('audience')}
+            placeholder="Retail customers, freelancers, SME..."
+          />
+        </div>
+
+        <div>
+          <label style={labelStyle}>Рынки / страны</label>
+          <textarea
+            style={textareaStyle}
+            value={form.markets}
+            onChange={setField('markets')}
+            placeholder="UK, EEA, US, Australia..."
+          />
+        </div>
+
+        <div>
+          <label style={labelStyle}>Бизнес-цели</label>
+          <textarea
+            style={textareaStyle}
+            value={form.goals}
+            onChange={setField('goals')}
+            placeholder="Рост активации, retention, spend, conversion..."
+          />
+        </div>
+
+        <div>
+          <label style={labelStyle}>Ключевые продукты / направления</label>
+          <textarea
+            style={textareaStyle}
+            value={form.products}
+            onChange={setField('products')}
+            placeholder="Debit cards, onboarding, rewards, cashback..."
+          />
+        </div>
+      </div>
+
+      <div style={sectionStyle}>
+        <div>
+          <label style={labelStyle}>Инструкции для AI</label>
+          <textarea
+            style={textareaStyle}
+            value={form.prompt}
+            onChange={setField('prompt')}
+            placeholder="Например: учитывай fintech-контекст, пиши кратко, выделяй риски, предлагай решения на уровне PM / strategy / GTM."
+          />
+          <div style={helperStyle}>
+            Этот текст можно использовать как устойчивый контекст для генерации PRD, исследований, GTM и других артефактов.
+          </div>
+        </div>
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          gap: 8,
+          justifyContent: 'flex-end',
+          marginTop: 2,
+        }}
+      >
+        <button
+          onClick={onCancel}
+          style={{
+            padding: '9px 18px',
+            borderRadius: 10,
+            border: '1px solid rgba(20,24,34,0.10)',
+            background: '#fff',
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: 'pointer',
+            color: 'var(--ink-2)',
+          }}
+        >
+          Отмена
+        </button>
+
+        <button
+          onClick={() => onSave(form as Profile)}
+          style={{
+            padding: '9px 20px',
+            borderRadius: 10,
+            border: 'none',
+            background: 'var(--ink)',
+            color: '#fff',
+            fontSize: 13,
+            fontWeight: 600,
+            cursor: 'pointer',
+          }}
+        >
+          Сохранить бриф
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function Modal({
+  title,
+  children,
+  onClose,
+  wide = false,
+}: {
+  title: string;
+  children: React.ReactNode;
+  onClose: () => void;
+  wide?: boolean;
+}) {
+  const panelRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    const prevPaddingRight = document.body.style.paddingRight;
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+
+    document.body.style.overflow = 'hidden';
+    if (scrollbarWidth > 0) {
+      document.body.style.paddingRight = `${scrollbarWidth}px`;
+    }
+
+    const frame = requestAnimationFrame(() => {
+      const closeBtn = panelRef.current?.querySelector<HTMLButtonElement>('[data-modal-close]');
+      closeBtn?.focus();
+    });
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      document.body.style.paddingRight = prevPaddingRight;
+      cancelAnimationFrame(frame);
+    };
+  }, []);
+
   return (
     <div
-      style={{
-        position: 'fixed', inset: 0, background: 'rgba(0,0,0,.45)',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        zIndex: 999, backdropFilter: 'blur(4px)',
+      role="dialog"
+      aria-modal="true"
+      aria-label={title}
+      onMouseDown={e => {
+        if (e.target === e.currentTarget) onClose();
       }}
-      onClick={e => { if (e.target === e.currentTarget) onClose(); }}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        zIndex: 1200,
+        background: 'rgba(31,28,24,0.18)',
+        backdropFilter: 'blur(10px)',
+        WebkitBackdropFilter: 'blur(10px)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: wide ? '20px' : '28px',
+      }}
     >
-      <div style={{
-        background: '#fff', borderRadius: 'var(--radius-lg)',
-        width: wide ? 760 : 480, maxWidth: 'calc(100vw - 40px)',
-        maxHeight: '85vh', overflow: 'auto',
-        boxShadow: '0 24px 80px rgba(0,0,0,.22)',
-        animation: 'rise .2s ease',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px 14px', borderBottom: '1px solid var(--border)' }}>
-          <div style={{ fontSize: 15, fontWeight: 700, fontFamily: 'var(--font-display)' }}>{title}</div>
-          <button onClick={onClose} style={{ fontSize: 18, color: 'var(--ink-3)', background: 'none', border: 'none', cursor: 'pointer', lineHeight: 1 }}>✕</button>
+      <div
+        ref={panelRef}
+        style={{
+          width: '100%',
+          maxWidth: wide ? 1040 : 620,
+          maxHeight: 'min(88vh, 920px)',
+          display: 'flex',
+          flexDirection: 'column',
+          background: 'rgba(251,250,247,0.98)',
+          border: '1px solid rgba(20,24,34,0.08)',
+          borderRadius: wide ? 24 : 20,
+          boxShadow: '0 24px 80px rgba(20,24,34,0.12)',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            justifyContent: 'space-between',
+            padding: wide ? '16px 18px' : '15px 16px',
+            borderBottom: '1px solid rgba(20,24,34,0.06)',
+            background: 'rgba(255,255,255,0.62)',
+            backdropFilter: 'blur(8px)',
+            WebkitBackdropFilter: 'blur(8px)',
+            flexShrink: 0,
+          }}
+        >
+          <div
+            style={{
+              minWidth: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+            }}
+          >
+            <div
+              style={{
+                fontSize: 15,
+                fontWeight: 600,
+                color: 'var(--ink)',
+                letterSpacing: '-.02em',
+                lineHeight: 1.2,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+            >
+              {title}
+            </div>
+
+            <div
+              style={{
+                fontSize: 11.5,
+                color: 'var(--ink-3)',
+                lineHeight: 1.4,
+              }}
+            >
+              {wide ? 'Просмотр артефакта' : 'Диалог'}
+            </div>
+          </div>
+
+          <button
+            data-modal-close
+            onClick={onClose}
+            aria-label="Закрыть"
+            style={{
+              width: 32,
+              height: 32,
+              borderRadius: 10,
+              border: '1px solid rgba(20,24,34,0.08)',
+              background: 'rgba(255,255,255,0.78)',
+              color: 'var(--ink-3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              flexShrink: 0,
+              fontSize: 16,
+              lineHeight: 1,
+              transition: 'background .12s ease, border-color .12s ease, color .12s ease',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = '#fff';
+              e.currentTarget.style.borderColor = 'rgba(20,24,34,0.12)';
+              e.currentTarget.style.color = 'var(--ink)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'rgba(255,255,255,0.78)';
+              e.currentTarget.style.borderColor = 'rgba(20,24,34,0.08)';
+              e.currentTarget.style.color = 'var(--ink-3)';
+            }}
+          >
+            ×
+          </button>
         </div>
-        <div style={{ padding: '20px 24px' }}>{children}</div>
-      </div>
-    </div>
-  );
-}
 
-// --- New Project Form ---
-function NewProjectForm({ onSave, onCancel }: { onSave: (name: string, product: string, goal: string) => void; onCancel: () => void }) {
-  const [name, setName] = useState('');
-  const [product, setProduct] = useState('');
-  const [goal, setGoal] = useState('');
-
-  const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-md)',
-    borderRadius: 9, fontSize: 13, outline: 'none', boxSizing: 'border-box', fontFamily: 'var(--font-ui)',
-  };
-  const labelStyle: React.CSSProperties = { fontSize: 12, fontWeight: 600, color: 'var(--ink-2)', marginBottom: 5, display: 'block' };
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div><label style={labelStyle}>Название проекта</label><input style={inputStyle} value={name} onChange={e => setName(e.target.value)} placeholder="Debit card DACH" /></div>
-      <div><label style={labelStyle}>Продукт / Домен</label><input style={inputStyle} value={product} onChange={e => setProduct(e.target.value)} placeholder="Payments, Growth, Platform…" /></div>
-      <div><label style={labelStyle}>Цель проекта</label><textarea style={{ ...inputStyle, resize: 'vertical', minHeight: 70 }} value={goal} onChange={e => setGoal(e.target.value)} placeholder="Опишите цель одним предложением…" /></div>
-      <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 4 }}>
-        <button onClick={onCancel} style={{ padding: '9px 18px', borderRadius: 9, border: '1.5px solid var(--border-md)', background: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', color: 'var(--ink-2)' }}>Отмена</button>
-        <button onClick={() => name.trim() && onSave(name.trim(), product.trim() || 'General', goal.trim())} disabled={!name.trim()} style={{ padding: '9px 20px', borderRadius: 9, border: 'none', background: name.trim() ? 'var(--orange)' : 'var(--border)', color: name.trim() ? '#fff' : 'var(--ink-3)', fontSize: 13, fontWeight: 600, cursor: name.trim() ? 'pointer' : 'default' }}>Создать</button>
-      </div>
-    </div>
-  );
-}
-
-// --- Profile Form ---
-function ProfileForm({ profile, onSave, onCancel }: { profile: Profile; onSave: (p: Profile) => void; onCancel: () => void }) {
-  const [form, setForm] = useState(profile);
-  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) => setForm(prev => ({ ...prev, [k]: e.target.value }));
-
-  const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '9px 12px', border: '1.5px solid var(--border-md)',
-    borderRadius: 9, fontSize: 13, outline: 'none', boxSizing: 'border-box', fontFamily: 'var(--font-ui)',
-  };
-  const labelStyle: React.CSSProperties = { fontSize: 12, fontWeight: 600, color: 'var(--ink-2)', marginBottom: 5, display: 'block' };
-
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 4 }}>
-        <div style={{ width: 56, height: 56, borderRadius: '50%', background: form.color, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, fontWeight: 700 }}>{form.initials}</div>
-        <div>
-          <div style={{ fontSize: 15, fontWeight: 700 }}>{form.name}</div>
-          <div style={{ fontSize: 12, color: 'var(--ink-3)' }}>{form.role} · {form.company}</div>
+        <div
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: wide ? '20px 22px 22px' : '18px 16px 16px',
+            background: 'transparent',
+          }}
+        >
+          {children}
         </div>
-      </div>
-      <div><label style={labelStyle}>Имя</label><input style={inputStyle} value={form.name} onChange={set('name')} /></div>
-      <div><label style={labelStyle}>Инициалы (2 буквы)</label><input style={inputStyle} value={form.initials} onChange={set('initials')} maxLength={2} /></div>
-      <div><label style={labelStyle}>Должность</label><input style={inputStyle} value={form.role} onChange={set('role')} /></div>
-      <div><label style={labelStyle}>Компания</label><input style={inputStyle} value={form.company} onChange={set('company')} /></div>
-      <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', marginTop: 4 }}>
-        <button onClick={onCancel} style={{ padding: '9px 18px', borderRadius: 9, border: '1.5px solid var(--border-md)', background: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', color: 'var(--ink-2)' }}>Отмена</button>
-        <button onClick={() => onSave(form)} style={{ padding: '9px 20px', borderRadius: 9, border: 'none', background: 'var(--orange)', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>Сохранить</button>
       </div>
     </div>
   );
