@@ -95,6 +95,23 @@ export interface Artifact {
   chatId: string | null;
 }
 
+export type PTaskRole = 'owner' | 'design' | 'analytics' | 'research' | 'dev';
+export type PTaskStatus = 'in_progress' | 'in_review' | 'changes_requested' | 'done';
+
+export interface ProjectTask {
+  id: string;
+  projectId: string;
+  title: string;
+  role: PTaskRole;
+  assignee: string;        // initials
+  assigneeName: string;
+  color: string;
+  status: PTaskStatus;
+  deliverable: string;     // что сдаёт исполнитель (PRD, прототип, аналитика)
+  comment?: string;        // комментарий ревьюера при возврате
+  artifactPushed?: boolean;
+}
+
 export interface Profile {
   name: string;
   initials: string;

@@ -1,4 +1,4 @@
-import { Project, Task, Chat, Artifact, Message, Profile, ProjectMember, ProjectMilestone, ProjectConclusion } from './types';
+import { Project, Task, Chat, Artifact, Message, Profile, ProjectMember, ProjectMilestone, ProjectConclusion, ProjectTask } from './types';
 
 export const TEAM_COLORS = ['#FF631F', '#2D6CDF', '#0D8A8A', '#B0299A', '#2F9E6B', '#7A5CD6'];
 
@@ -658,3 +658,38 @@ function formatDate(d: Date): string {
   if (diffDays < 7) return `${diffDays} дн. назад`;
   return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
 }
+
+// ============ Командные задачи внутри проекта (роли, передача, ревью) ============
+export const PTASK_ROLE_META: Record<string, { label: string; short: string; color: string; ico: string }> = {
+  owner:     { label: 'Owner · логика и решение', short: 'Owner', color: '#FF631F', ico: 'prd' },
+  design:    { label: 'Дизайн · прототип',        short: 'Дизайн', color: '#2D6CDF', ico: 'proto-mobile' },
+  analytics: { label: 'Аналитика',                short: 'Аналитика', color: '#2F9E6B', ico: 'funnel' },
+  research:  { label: 'Ресёрч',                   short: 'Ресёрч', color: '#0D8A8A', ico: 'desk' },
+  dev:       { label: 'Разработка',               short: 'Dev', color: '#B0299A', ico: 'techspec' },
+};
+
+export const PTASK_STATUS_META: Record<string, { label: string; bg: string; color: string }> = {
+  in_progress:       { label: 'В работе',     bg: 'var(--ai-lt)', color: 'var(--ai)' },
+  in_review:         { label: 'На ревью',     bg: 'rgba(217,119,6,0.12)', color: '#B45309' },
+  changes_requested: { label: 'На доработке', bg: 'rgba(220,38,38,0.1)', color: '#DC2626' },
+  done:              { label: 'Завершена',    bg: 'var(--green-lt)', color: 'var(--green)' },
+};
+
+export const INITIAL_PROJECT_TASKS: ProjectTask[] = [
+  // Debit card DACH
+  { id: 'pt-1', projectId: 'rev-card', title: 'Логика и PRD дебетовой карты', role: 'owner',
+    assignee: 'AR', assigneeName: 'Алексей Романов', color: '#FF631F', status: 'in_progress', deliverable: 'PRD / Spec' },
+  { id: 'pt-2', projectId: 'rev-card', title: 'Прототип онбординга карты', role: 'design',
+    assignee: 'DS', assigneeName: 'Дмитрий Соколов', color: '#2D6CDF', status: 'in_review', deliverable: 'Интерактивный прототип' },
+  { id: 'pt-3', projectId: 'rev-card', title: 'Конкурентный анализ DACH', role: 'research',
+    assignee: 'PM', assigneeName: 'Паша Морозов', color: '#0D8A8A', status: 'done', deliverable: 'Аналитика рынка', artifactPushed: true },
+
+  // Onboarding v2
+  { id: 'pt-4', projectId: 'onboarding-v2', title: 'Логика нового онбординга', role: 'owner',
+    assignee: 'AM', assigneeName: 'Алексей Мосин', color: '#B0299A', status: 'in_progress', deliverable: 'PRD / Spec' },
+  { id: 'pt-5', projectId: 'onboarding-v2', title: 'Прототип Welcome-флоу', role: 'design',
+    assignee: 'DS', assigneeName: 'Дмитрий Соколов', color: '#2D6CDF', status: 'in_review', deliverable: 'Интерактивный прототип' },
+  { id: 'pt-6', projectId: 'onboarding-v2', title: 'Аналитика воронки активации', role: 'analytics',
+    assignee: 'TL', assigneeName: 'Тимур Ли', color: '#2F9E6B', status: 'changes_requested',
+    deliverable: 'Funnel-аналитика', comment: 'Нужны срезы по когортам DE/AT и доверительные интервалы.' },
+];

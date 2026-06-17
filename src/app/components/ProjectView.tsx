@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -17,9 +17,16 @@ import {
   BarChart3,
   Briefcase,
   ShieldCheck,
+  Send,
+  Check,
+  RotateCcw,
+  ListChecks,
+  FolderInput,
+  CornerUpRight,
 } from 'lucide-react';
-import { Project, Artifact, Chat } from '../types';
+import { Project, Artifact, Chat, ProjectTask } from '../types';
 import { TaskIcon } from './TaskIcon';
+import { INITIAL_PROJECT_TASKS, PTASK_ROLE_META, PTASK_STATUS_META } from '../data';
 
 interface ProjectViewProps {
   project: Project;
@@ -411,6 +418,16 @@ export function ProjectView({
                 />
               ))
             )}
+          </SectionCard>
+        </div>
+
+        <div style={{ marginBottom: 18 }}>
+          <SectionCard
+            title="Командные задачи"
+            icon={<ListChecks size={13} color="var(--ink-3)" />}
+            action={{ label: '+ Задача', onClick: () => {} }}
+          >
+            <TeamTaskBoard projectId={project.id} />
           </SectionCard>
         </div>
 
@@ -989,4 +1006,139 @@ function iconActionBtn(): React.CSSProperties {
     justifyContent: 'center',
     cursor: 'pointer',
   };
+}
+function PtAvatar({ initials, color, size = 24 }: { initials: string; color: string; size?: number }) {
+  return (
+    <div
+      style={{
+        width: size, height: size, borderRadius: 999, background: color, color: '#fff',
+        fontSize: Math.round(size * 0.38), fontWeight: 700, flexShrink: 0,
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+      }}
+    >
+      {initials}
+    </div>
+  );
+}
+
+function ttbActionBtn(variant?: 'primary'): React.CSSProperties {
+  return {
+    display: 'inline-flex', alignItems: 'center', gap: 6,
+    fontSize: 12, fontWeight: 600, padding: '7px 12px', borderRadius: 10, cursor: 'pointer',
+    border: variant === 'primary' ? 'none' : '1px solid var(--border)',
+    background: variant === 'primary' ? 'var(--ink)' : 'rgba(255,255,255,0.7)',
+    color: variant === 'primary' ? '#fff' : 'var(--ink)',
+  };
+}
+
+function TeamTaskBoard({ projectId }: { projectId: string }) {
+  const [tasks, setTasks] = useState<ProjectTask[]>(
+    () => INITIAL_PROJECT_TASKS.filter(t => t.projectId === projectId),
+  );
+  const [commentFor, setCommentFor] = useState<string | null>(null);
+  const [comment, setComment] = useState('');
+
+  const update = (id: string, patch: Partial<ProjectTask>) =>
+    setTasks(cur => cur.map(t => (t.id === id ? { ...t, ...patch } : t)));
+
+  if (tasks.length === 0) {
+    return (
+      <div style={{ padding: 16, fontSize: 12.5, color: 'var(--ink-3)' }}>
+        В проекте пока нет командных задач.
+      </div>
+    );
+  }
+
+  return (
+    <div>
+      {tasks.map((t, i) => {
+        const role = PTASK_ROLE_META[t.role];
+        const st = PTASK_STATUS_META[t.status];
+        const isReview = t.status === 'in_review';
+        return (
+          <div
+            key={t.id}
+            style={{ padding: '14px 16px', borderBottom: i < tasks.length - 1 ? '1px solid var(--border)' : 'none' }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <TaskIcon taskId={role.ico} size={34} color={role.color} bg={`${role.color}1a`} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: 'var(--ink)' }}>{t.title}</div>
+                <div style={{ fontSize: 11.5, color: 'var(--ink-3)', marginTop: 2 }}>
+                  {role.short} · сдаёт: {t.deliverable}
+                </div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                <PtAvatar initials={t.assignee} color={t.color} />
+                <span style={{ fontSize: 10.5, fontWeight: 600, padding: '3px 9px', borderRadius: 999, background: st.bg, color: st.color }}>
+                  {st.label}
+                </span>
+              </div>
+            </div>
+
+            {t.status === 'changes_requested' && t.comment && (
+              <div style={{ marginTop: 10, marginLeft: 46, padding: '8px 11px', borderRadius: 12, background: 'rgba(220,38,38,0.06)', border: '1px solid rgba(220,38,38,0.18)', fontSize: 11.5, color: 'var(--ink-2)', display: 'flex', gap: 7 }}>
+                <CornerUpRight size={13} color="#DC2626" style={{ flexShrink: 0, marginTop: 1 }} />
+                <span><b style={{ color: '#DC2626' }}>На доработку:</b> {t.comment}</span>
+              </div>
+            )}
+
+            <div style={{ marginTop: 11, marginLeft: 46, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+              {t.status === 'in_progress' && (
+                <button onClick={() => update(t.id, { status: 'in_review' })} style={ttbActionBtn('primary')}>
+                  <Send size={13} /> Завершить → на ревью{t.role !== 'owner' ? ' (owner утвердит)' : ''}
+                </button>
+              )}
+
+              {isReview && commentFor !== t.id && (
+                <>
+                  <button onClick={() => update(t.id, { status: 'done', comment: undefined })} style={ttbActionBtn('primary')}>
+                    <Check size={13} /> Утвердить
+                  </button>
+                  <button onClick={() => { setCommentFor(t.id); setComment(''); }} style={ttbActionBtn()}>
+                    <RotateCcw size={13} /> Вернуть на доработку
+                  </button>
+                </>
+              )}
+
+              {isReview && commentFor === t.id && (
+                <div style={{ width: '100%', display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                  <textarea
+                    autoFocus value={comment} onChange={e => setComment(e.target.value)} rows={2}
+                    placeholder="Что доработать?"
+                    style={{ flex: 1, padding: '8px 10px', borderRadius: 10, border: '1px solid var(--border)', fontSize: 12.5, resize: 'vertical', outline: 'none', fontFamily: 'inherit' }}
+                  />
+                  <button
+                    onClick={() => { if (comment.trim()) { update(t.id, { status: 'changes_requested', comment }); setCommentFor(null); setComment(''); } }}
+                    style={{ ...ttbActionBtn('primary'), opacity: comment.trim() ? 1 : 0.5 }}
+                  >
+                    Отправить
+                  </button>
+                  <button onClick={() => setCommentFor(null)} style={ttbActionBtn()}>Отмена</button>
+                </div>
+              )}
+
+              {t.status === 'changes_requested' && (
+                <button onClick={() => update(t.id, { status: 'in_progress' })} style={ttbActionBtn()}>
+                  <RotateCcw size={13} /> Взять в работу
+                </button>
+              )}
+
+              {t.status === 'done' && (
+                t.artifactPushed ? (
+                  <span style={{ fontSize: 11.5, color: 'var(--green)', display: 'inline-flex', alignItems: 'center', gap: 5, fontWeight: 600 }}>
+                    <CheckCircle2 size={14} /> Завершена · в артефактах
+                  </span>
+                ) : (
+                  <button onClick={() => update(t.id, { artifactPushed: true })} style={ttbActionBtn()}>
+                    <FolderInput size={13} /> В артефакты
+                  </button>
+                )
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 }

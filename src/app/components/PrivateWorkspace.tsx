@@ -15,6 +15,12 @@ import {
   Bot,
   Check,
   Briefcase,
+  Github,
+  Figma,
+  SquareKanban,
+  Chrome,
+  Slack,
+  ShieldCheck,
 } from 'lucide-react';
 import { Task, Chat, Project, TaskEntity, Message } from '../types';
 import { CAT_COLORS } from '../data';
@@ -76,6 +82,7 @@ export function PrivateWorkspace({
   const [audioEnabled, setAudioEnabled] = useState(false);
   const [filesEnabled, setFilesEnabled] = useState(false);
   const [connectorsEnabled, setConnectorsEnabled] = useState(false);
+  const [connected, setConnected] = useState<Record<string, boolean>>({ github: true, figma: true });
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const dockedTextareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -535,6 +542,62 @@ export function PrivateWorkspace({
     );
   };
 
+  const CONNECTORS = [
+    { id: 'github', name: 'GitHub', Icon: Github, color: '#1b1c20' },
+    { id: 'figma', name: 'Figma', Icon: Figma, color: '#A259FF' },
+    { id: 'jira', name: 'Jira', Icon: SquareKanban, color: '#2D6CDF' },
+    { id: 'google', name: 'Google', Icon: Chrome, color: '#1A73E8' },
+    { id: 'slack', name: 'Slack', Icon: Slack, color: '#4A154B' },
+  ];
+
+  const renderConnectorsStrip = () => (
+    <div
+      style={{
+        marginTop: 8,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 10,
+        padding: '8px 12px',
+        borderRadius: 14,
+        background: 'rgba(255,255,255,0.6)',
+        border: '1px solid var(--border)',
+      }}
+    >
+      <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--ink-3)', flexShrink: 0 }}>
+        Точнее с вашими источниками
+      </span>
+      <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 7, flexWrap: 'wrap' }}>
+        {CONNECTORS.map(c => {
+          const on = !!connected[c.id];
+          return (
+            <button
+              key={c.id}
+              onClick={() => setConnected(s => ({ ...s, [c.id]: !s[c.id] }))}
+              title={on ? `${c.name} — подключено` : `Подключить ${c.name}`}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                padding: '5px 9px',
+                borderRadius: 9,
+                cursor: 'pointer',
+                background: on ? `${c.color}14` : 'transparent',
+                border: `1px solid ${on ? `${c.color}40` : 'var(--border)'}`,
+                color: on ? c.color : 'var(--ink-3)',
+                fontSize: 11.5,
+                fontWeight: 600,
+              }}
+            >
+              <c.Icon size={14} />
+              {c.name}
+              {on && <Check size={11} />}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+
   const renderComposer = (variant: 'stage' | 'docked') => {
     const isStage = variant === 'stage';
     const ref = isStage ? stageTextareaRef : dockedTextareaRef;
@@ -702,6 +765,7 @@ export function PrivateWorkspace({
             </button>
           </div>
 
+          {isStage && renderConnectorsStrip()}
           {isStage && renderAttachedSuggestions()}
         </div>
       </div>
@@ -953,6 +1017,7 @@ function ArtifactMessage({
 }) {
   const taskName = tasks.find(t => t.id === msg.taskId)?.name;
   const isExpanded = expandedMsgs.has(msg.id);
+  const [sent, setSent] = useState<null | 'review' | 'artifact'>(null);
   const isLong = (msg.docHtml?.length || 0) > 300;
 
   return (
@@ -1170,11 +1235,24 @@ function ArtifactMessage({
             onClick={() => onCopy(msg.docHtml || '')}
           />
 
-          <ActionBtn
-            icon={<FolderInput size={12} />}
-            label="В проект"
-            onClick={() => onAttachToProject(msg.id)}
-          />
+          {sent ? (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 600, color: 'var(--green)' }}>
+              <Check size={13} /> {sent === 'review' ? 'Отправлено на ревью' : 'Добавлено в артефакты'}
+            </span>
+          ) : (
+            <>
+              <ActionBtn
+                icon={<ShieldCheck size={12} />}
+                label="На ревью"
+                onClick={() => { setSent('review'); onShareToTeam(msg.id); }}
+              />
+              <ActionBtn
+                icon={<FolderInput size={12} />}
+                label="В артефакты"
+                onClick={() => { setSent('artifact'); onAttachToProject(msg.id); }}
+              />
+            </>
+          )}
 
           <div style={{ flex: 1 }} />
 
